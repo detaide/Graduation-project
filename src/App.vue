@@ -1,13 +1,18 @@
 <script setup lang="ts">
-    import Login from "@/components/Login/login.vue"
+    import Login from "@/components/Login/login.vue";
+    import Header from "@/views/header/header.vue";
+
 </script>
 
 <template>
     <div>
-        <RouterView/>
+        <div class="top invisible"></div>
+        <div class="fixed w-full h-1/10 bg-white z-10"><Header class="w-full h-full"/></div>
+        <RouterView class="pt-24"/>
         <div class="fixed w-full h-full left-0 top-0 z-30 loginModel display-hide">
             <Login/>
         </div>
+        
     </div>
     
 </template>

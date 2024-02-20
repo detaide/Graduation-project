@@ -5,7 +5,7 @@
                 <div class=" text-4xl font-bold ">LOGO</div>
             </div>
             <ul class="flex flex-row pl-6">
-                <li v-for="(item, index) in liItem" :key="index" class="flex justify-center text-sm items-center text-center px-2 py-0.5 hover-bottom-blue hover-blue"><a href="">{{ item }}</a></li>
+                <li v-for="(item, index) in liItem" :key="index" class="flex justify-center text-sm items-center text-center px-2 py-0.5 hover-bottom-blue hover-blue"><a @click="jumpTo(item.key)" class="cursor-pointer">{{ item.title }}</a></li>
             </ul>
        </div>
 
@@ -19,14 +19,46 @@
 <script setup lang="ts">
     import Search from "./search.vue";
     import {NAvatar} from "naive-ui";
-    import * as LoginModel from "@/utils/general/loginModel"
-    const liItem = ["首页","动态","校园集市", "校园频道"];
+    // import * as LoginModel from "@/utils/general/loginModel";
+    import {useRouter} from "vue-router";
+
+    const liItem = [
+        {
+            key : "Home",
+            title : "首页"
+        },
+        {
+            key : "",
+            title : "动态"
+        },
+        {
+            key : "",
+            title : "校园集市"
+        },
+        {
+            key : "",
+            title :  "校园频道"
+        },
+        {
+            key : "editor",
+            title : "编辑"
+        }
+    ];
     const avatar = 'https://img.zcool.cn/community/0122a15d22b574a801213763e36eba.jpg@2o.jpg';
+
+    const router = useRouter();
 
     const loginHandle = () =>
     {
-        LoginModel.openLoginModel();
+        // LoginModel.openLoginModel();
+        router.push("user")
     }
+
+    const jumpTo = (path : string) =>
+    {
+        router.push(path);
+    }
+
 
 </script>
     

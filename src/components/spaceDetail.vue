@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute w-full h-full mask top-0 left-0 z-20 max-rem"
+    <div class="absolute w-full h-full mask top-0 left-0 z-20 max-vh"
         @click="maskHandler($event.target)"
     >
         <div class="w-full h-full relative"
@@ -55,5 +55,8 @@
     }
     .bg-img{
         background-image: url(../assets//img/avatar.jpg);
+    }
+    .max-vh{
+        max-height: 100vh;
     }
 </style>

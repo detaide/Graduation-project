@@ -1,6 +1,6 @@
 import type { App } from "vue"
 import type { RouteRecordRaw } from 'vue-router'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 
 const routes : RouteRecordRaw[] = [
     {
@@ -32,11 +32,16 @@ const routes : RouteRecordRaw[] = [
                 component : () => import("@/components/spaceDetail.vue")
             }
         ]
+    },
+    {
+        path : "/editor",
+        name : "editor",
+        component : () => import("@/views/editor/editor.vue")
     }
 ]
 
 export const router = createRouter({
-    history : createWebHashHistory(),
+    history : createWebHistory(),
     routes
 })
 
