@@ -4,7 +4,7 @@
         <Content class="w-full" 
             @open-space="openSpaceHandler"/>
         <router-view></router-view>
-        <div class="fixed bottom-32 right-16 text-4xl text-white w-12 h-12 bg-blue-500 text-center rounded-full cursor-pointer">+</div>
+        <div class="fixed bottom-32 right-16 text-4xl text-white w-12 h-12 bg-blue-500 text-center rounded-full cursor-pointer" @click="routerHandler.openEditor()">+</div>
         <div class="fixed bottom-12 right-16 text-2xl  w-12 h-12  text-center rounded-full border  flex items-center justify-center shadow-sm cursor-pointer" @click="BackToTop">
             <Icon :size="30">
                 <ArrowUp/>
@@ -18,6 +18,7 @@
     import { useRouter } from "vue-router";
     import {Icon} from "@vicons/utils";
     import {ArrowUp} from "@vicons/ionicons5";
+    import * as routerHandler from "@/router/routeHandle"
     
     const router = useRouter();
 

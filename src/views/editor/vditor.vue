@@ -9,6 +9,7 @@
     import Vditor from "vditor";
     import "vditor/dist/index.css";
     import {ref, onMounted} from "vue";
+    // const VDITOR_CDN = import.meta.env.VITE_VDITOR_CDN;
 
     const vditor  = ref();
 
@@ -38,11 +39,8 @@
             image : {
                 isPreview : true,
             },
-            cdn: '/assets', 
+            cdn: "/cdn", 
         });
-
-        const html = await Vditor.md2html("hahaha");
-        console.log(html)
 
     })
 
@@ -50,5 +48,4 @@
 </script>
     
 <style lang="less" scoped>
-    
 </style>

@@ -19,8 +19,9 @@
         <div class="pt-20 h-6/7 scroll-hide overflow-auto pl-4">
             <div class="border-b-2 border-gray-300">
                 <div class="font-bold text-lg text-gray-800">我是标题</div>
-                <span class="text-base text-gray-500 tracking-tight align-baseline whitespace-pre-line text-indent">
-                    {{ text }}
+                <span class="text-base text-gray-500 tracking-tight align-baseline whitespace-pre-line text-indent refHTML" ref="mdHTMLRef">
+                    <!-- {{ textHTML }} -->
+                    <div v-html="textHTML"></div>
                 </span>
                 <div class="px-4 py-6 text-gray-400 text-sm"> 发布于 2024-01-05 13:16:37</div>
             </div>
@@ -64,7 +65,11 @@
 <script setup lang="ts">
     import { Icon } from '@vicons/utils';
     import { HeartOutline, StarOutline, ChatboxEllipsesOutline } from '@vicons/ionicons5';
-    import SpaceContent from "./spaceContent.vue"
+    import SpaceContent from "./spaceContent.vue";
+    import Vditor from "vditor";
+    import {onMounted, ref} from "vue";
+
+    const textHTML = ref('');
 
     const text = `
     The sky was a brilliant shade of blue, with fluffy white clouds scattered across the horizon. A gentle breeze blew through the trees, rustling the leaves and carrying the scent of blooming flowers. Birds chirped and sang in the distance, creating a peaceful and serene atmosphere.
@@ -77,6 +82,17 @@ As I emerged from the trees, I was greeted by a breathtaking sight. The waterfal
 Without hesitation, I stripped down to my swimsuit and dove into the water. The coolness was refreshing, and I felt invigorated as I swam around the pool. I climbed out and sat on a nearby rock, basking in the warmth of the sun.
 It was moments like these that made life worth living, and I was grateful for the opportunity to experience them. As I made my way back home, I felt renewed and refreshed, ready to face whatever challenges lay ahead.
     `
+
+    const md2html = async (text : string) =>
+    {
+        return await Vditor.md2html(text, {cdn : "/cdn", mode : "light"});
+    }
+
+    onMounted(async () =>
+    {
+        textHTML.value = await md2html(text);
+    })
+
 </script>
     
 <style lang="less" scoped>
@@ -88,4 +104,5 @@ It was moments like these that made life worth living, and I was grateful for th
         scale: 1.1;
     }
     
+
 </style>
