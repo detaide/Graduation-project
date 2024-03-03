@@ -12,7 +12,7 @@
                 <div class="absolute w-3/4 top-1/4 h-1/2 left-1/8 flex flex-col gap-y-4 items-center">
                     <input type="text" class="login-input " placeholder="请输入账号">
                     <input type="text" class="login-input " placeholder="请输入密码">
-                    <div class="px-4 py-2 border w-4/5 text-center rounded-lg bg-blue-500 text-white">登录 / 注册</div>
+                    <div class="px-4 py-2 border w-4/5 text-center rounded-lg bg-blue-500 text-white cursor-pointer active:scale-95 transform">登录 / 注册</div>
                     <div class="flex flex-row items-center text-center">
                         <n-checkbox class="text-gray-300" :size="'small'" v-model:checked="loginObj.checkItem">
                             <div class="text-xs h-6 flex items-center">

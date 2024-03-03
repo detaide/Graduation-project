@@ -12,6 +12,7 @@
         <div class="flex items-center justify-center gap-x-2 cursor-pointer">
             <Search/>
             <n-avatar round :src="avatar" @click="loginHandle"/>
+            <div class="w-12 h-6 bg-blue-400 cursor-pointer text-center text-white" @click="loginHandleTrigger"> 登录</div>
         </div>
     </div>
     
@@ -19,7 +20,7 @@
 <script setup lang="ts">
     import Search from "./search.vue";
     import {NAvatar} from "naive-ui";
-    // import * as LoginModel from "@/utils/general/loginModel";
+    import * as LoginModel from "@/utils/general/loginModel";
     import {useRouter} from "vue-router";
 
     const liItem = [
@@ -36,7 +37,7 @@
             title : "校园集市"
         },
         {
-            key : "",
+            key : "channel",
             title :  "校园频道"
         },
         {
@@ -51,12 +52,17 @@
     const loginHandle = () =>
     {
         // LoginModel.openLoginModel();
-        router.push("user")
+        router.push("/user")
+    }
+
+    const loginHandleTrigger = () =>
+    {
+        LoginModel.openLoginModel();
     }
 
     const jumpTo = (path : string) =>
     {
-        router.push(path);
+        router.push('/' + path);
     }
 
 

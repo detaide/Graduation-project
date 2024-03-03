@@ -33,7 +33,7 @@
                 url : "/img_temp"
             },
             toolbarConfig : {
-                hide : true,
+                // hide : true,
                 
             },
             image : {

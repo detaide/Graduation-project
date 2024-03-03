@@ -25,18 +25,47 @@ const routes : RouteRecordRaw[] = [
         path : "/user",
         name : "user",
         component : () => import("@/views/user/index.vue"),
+        redirect : {name : "userSpace"},
         children: [
             {
-                path : "/user/:spaceId",
+                path : "userSpace",
                 name : "userSpace",
-                component : () => import("@/components/spaceDetail.vue")
-            }
+                component : () => import("@/views/user/userSpace.vue"),
+                children : [
+                    {
+                        path: "/user/userSpace/:id",
+                        name : "spaceDetail",
+                        component : () => import("@/components/spaceDetail.vue")
+                    }
+                ]
+            },
+            {
+                path : "userChannel",
+                name : "userChannel",
+                component : () => import("@/views/user/userChannel.vue")
+            },
+            
         ]
     },
     {
         path : "/editor",
         name : "editor",
         component : () => import("@/views/editor/editor.vue")
+    },
+    {
+        path : "/channel",
+        name : "channel",
+        component : () => import("@/views/channel/index.vue")
+    },
+    {
+        path : "/channelPage/:channelName",
+        name : "channelPage",
+        component : () => import("@/views/channel/channelPageLet.vue")
+    },
+    {
+        path : "/commentInfo/:commentId",
+        name : "commentInfo",
+        component : () => import("@/views/channel/commentInfo.vue")
     }
 ]
 

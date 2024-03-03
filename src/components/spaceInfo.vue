@@ -18,7 +18,7 @@
 
         <div class="pt-20 h-6/7 scroll-hide overflow-auto pl-4">
             <div class="border-b-2 border-gray-300">
-                <div class="font-bold text-lg text-gray-800">我是标题</div>
+                <div class="font-bold text-lg text-gray-800 pt-4">我是标题</div>
                 <span class="text-base text-gray-500 tracking-tight align-baseline whitespace-pre-line text-indent refHTML" ref="mdHTMLRef">
                     <!-- {{ textHTML }} -->
                     <div v-html="textHTML"></div>
