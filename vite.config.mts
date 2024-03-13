@@ -26,12 +26,17 @@ export default defineConfig({
     }
   },
   server : {
-    port : 5173,
+    // port : 5173,
     proxy : {
       "/cdn" : {
         target : "http://121.41.95.16:20120/static/vditor/",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/cdn/, '') // 不可以省略rewrite
+        rewrite: (path) => path.replace(/^\/cdn/, '')
+      },
+      "/api" : {
+        target : "http://localhost:3000/",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }

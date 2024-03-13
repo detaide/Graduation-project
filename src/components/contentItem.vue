@@ -12,16 +12,16 @@
                     </Icon>
                     <div>200</div>
                 </div>
-                <div class="flex items-center gap-1 cursor-pointer">
+                <!-- <div class="flex items-center gap-1 cursor-pointer">
                     <Icon :size="12">
                         <ChatboxEllipsesOutline/>
                     </Icon>
                     <div>2</div>
-                </div>
+                </div> -->
             </div>
-            <div class="pl-2">
+            <!-- <div class="pl-2">
                 <Content-Sub-Item/>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
