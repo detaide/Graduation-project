@@ -4,7 +4,8 @@ import axios, { type AxiosResponse } from 'axios'
  * 封装service，设置基础URL,为/api，走代理过跨域
  */
 const service = axios.create({
-    baseURL: import.meta.env.VITE_GLOB_API_URL
+    baseURL: import.meta.env.VITE_GLOB_API_URL,
+    withCredentials: true // 允许携带 Cookie
 })
 
 

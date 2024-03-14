@@ -10,6 +10,11 @@ const routes : RouteRecordRaw[] = [
         
     },
     {
+        path : '/demo',
+        name : "demo",
+        component : () => import("@/components/demo.vue")
+    },
+    {
         path : "/home",
         name : "home",
         component : () => import("@/views/home.vue"),
@@ -43,7 +48,7 @@ const routes : RouteRecordRaw[] = [
                 path : "userChannel",
                 name : "userChannel",
                 component : () => import("@/views/user/userChannel.vue")
-            },
+            }
             
         ]
     },

@@ -4,15 +4,17 @@
             <div class="w-32 h-32 rounded-full bg-gray-300"></div>
             <div class="w-52">
                 <div class="flex flex-row justify-between items-center">
-                    <div class="text-2xl font-bold">你的名字
-                        <Icon :size="20" color="blue" v-show="userInfo.gender">
+                    <div class="text-2xl font-bold"> {{ userInfo.nickname }}
+                        <Icon :size="20" color="blue" v-show="userInfo.gender === 1">
                             <MaleSharp/>
                         </Icon>
-                        <Icon :size="20" color="pink" v-show="!userInfo.gender">
+                        <Icon :size="20" color="pink" v-show="userInfo.gender !== 1">
                             <FemaleSharp/>
                         </Icon>
                     </div>
-                    <div class="text-base w-16 py-1 bg-red-500 text-center text-white rounded-full font-bold cursor-pointer active:scale-95 transform">关注</div>
+                    <div class="text-base w-16 py-1 bg-red-500 text-center text-white rounded-full font-bold cursor-pointer active:scale-95 transform" v-show="!homeSelf">关注</div>
+                    <div class="text-base w-16 py-1 bg-red-500 text-center text-white rounded-full font-bold cursor-pointer active:scale-95 transform" v-show="homeSelf" @click="userEditorHandle">编辑</div>
+
                 </div>
                 <div class="text-xs text-gray-400 py-1">
                     用户号 : {{ userInfo.userId }}
@@ -36,31 +38,51 @@
             </div>
         </div>
     </div>
+    <n-modal v-model:show="showEditor">
+        <UserEditor/>
+    </n-modal> 
+    
 </template>
 <script setup lang="ts">
     import { Icon } from "@vicons/utils";
     import { MaleSharp, FemaleSharp } from "@vicons/ionicons5";
-    import { reactive } from "vue";
+    import { onMounted, reactive, ref } from "vue";
+    import { NModal } from "naive-ui";
+    import { useRouter } from "vue-router";
+    import UserEditor from "./userEditor.vue";
+    import { useUserInfoStore } from "@/store/modules/userInfo";
+import { UserMessage } from "@/typings";
 
-    interface UserInfo {
-        gender : 0 | 1,      // 1 : male 0 : female
-        userId : number,
-        description : string,
+
+    interface UserInfo extends UserMessage{
+        userId : string,
         followers : number,
         followed : number,
         favorite : number
     }
 
-    const userInfo = reactive<UserInfo>({
-        gender : 0,
-        userId : 642235636378,
-        description : `🏘️ 常驻小宁德
-            🏕️ 边徒步 边拍照
-            📷 GR3 尼康Z5 MI13U    
-        `,
+    const homeSelf = ref(true);
+    const router = useRouter();
+    const showEditor = ref(false);
+    const userInfoStore = useUserInfoStore();
+
+    const userInfo = ref<Partial<UserInfo>>({
         followers : 12,
         followed : 13,
         favorite : 224
+    })
+
+    const userEditorHandle = () =>
+    {
+        showEditor.value = true;
+    }
+
+    onMounted(() =>
+    {
+        userInfo.value = {
+            ...userInfo.value,
+            ...userInfoStore.userDetail,
+        }
     })
 </script>
     

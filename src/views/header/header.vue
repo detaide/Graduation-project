@@ -11,17 +11,26 @@
 
         <div class="flex items-center justify-center gap-x-2 cursor-pointer">
             <Search/>
-            <n-avatar round :src="avatar" @click="loginHandle"/>
-            <div class="w-12 h-6 bg-blue-400 cursor-pointer text-center text-white" @click="loginHandleTrigger"> 登录</div>
+            <div class="relative">
+                <n-avatar round :src="avatar" @click="loginHandle" v-show="loginStatus"/>
+                <div class="absolute -left-8 top-12 w-24 h-24 bg-white border border-gray-400 p-1 rounded-lg" v-show="avatarToolShow">
+                    <div class="w-full py-2 hover:bg-gray-200 rounded-md text-center" @click="jump2Home">我的主页</div>
+                    <div class="w-full py-2 hover:bg-gray-200 rounded-md text-center" @click="logout">退出登录</div>
+                </div>
+            </div>
+            <div class="w-12 h-6 bg-blue-400 cursor-pointer text-center text-white" @click="loginHandleTrigger" v-show="!loginStatus"> 登录</div>
         </div>
     </div>
     
 </template>
 <script setup lang="ts">
     import Search from "./search.vue";
-    import {NAvatar} from "naive-ui";
+    import {NAvatar, createDiscreteApi} from "naive-ui";
     import * as LoginModel from "@/utils/general/loginModel";
     import {useRouter} from "vue-router";
+    import { useUserInfoStore } from "@/store/modules/userInfo";
+    import { onMounted, watch, ref } from "vue";
+    import { eventBus } from "@/utils/eventBus";
 
     const liItem = [
         {
@@ -48,11 +57,28 @@
     const avatar = 'https://img.zcool.cn/community/0122a15d22b574a801213763e36eba.jpg@2o.jpg';
 
     const router = useRouter();
+    const userInfoStore = useUserInfoStore();
+    const loginStatus = ref(false);
+    const avatarToolShow = ref(false);
 
     const loginHandle = () =>
     {
         // LoginModel.openLoginModel();
-        router.push("/user")
+        // router.push("/user")
+        avatarToolShow.value = !avatarToolShow.value;
+    }
+
+    const jump2Home = () =>
+    {
+        router.push("/user");
+        avatarToolShow.value = false;
+    }
+
+    const logout = () =>
+    {
+        userInfoStore.logout();
+        avatarToolShow.value = false;
+        router.push("/home");
     }
 
     const loginHandleTrigger = () =>
@@ -65,6 +91,22 @@
         router.push('/' + path);
     }
 
+    onMounted(() =>
+    {
+        loginStatus.value = userInfoStore.isLogin();
+    })
+
+    eventBus.on("Login", () =>
+    {
+        console.log("login")
+        loginStatus.value = userInfoStore.isLogin();
+    })
+
+    eventBus.on("logout", () =>
+    {
+        loginStatus.value = false;
+        LoginModel.openLoginModel();
+    })
 
 </script>
     

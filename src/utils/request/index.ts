@@ -4,6 +4,8 @@
 
 import { AxiosResponse } from "axios"
 import request from './axios'
+import { MessageReactive, createDiscreteApi } from "naive-ui";
+
 
 /**
  * 设置接口方便类型检查
@@ -24,6 +26,8 @@ export interface Response<T = any> {
 }
 
 
+const {message} = createDiscreteApi(["message"]);
+
 export function http<T = any>(
     {
         url,
@@ -36,12 +40,19 @@ export function http<T = any>(
 ){
     // 成功请求
     const successHandler = (res : AxiosResponse<Response<T>>) => {
-        //对返回数据状态码进行校验
-        if(res.status === 200 || res.status === 201){
+        console.log(res);
+        //对返回数据状态码进行校验, 1001 服务端自定义错误代码
+        if((res.status === 200 || res.status === 201) && res.data.status !== 1001){
             return res.data
         }
+
+        if(res.data.status === 1001)
+        {
+            message.error(res.data.message || 'Error');
+        }
         //其他返回状态
-        return Promise.reject(res.data)
+        return Promise.reject(res.data);
+        // return Promise.resolve(res.data);
     }
 
     //请求失败
@@ -81,7 +92,7 @@ export function get< T = any>(
 
 export function post< T = any>(
     {url, data, method = "POST", headers, beforeRequest,afterRequest} :HttpOption
-) :  | Promise<Response<T> | T>{
+) :  | Promise<Response<T> | T> {
     return http<T>({
         url,
         data,
