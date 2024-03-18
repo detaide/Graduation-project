@@ -29,7 +29,7 @@
     import * as LoginModel from "@/utils/general/loginModel";
     import {useRouter} from "vue-router";
     import { useUserInfoStore } from "@/store/modules/userInfo";
-    import { onMounted, watch, ref } from "vue";
+    import { onMounted, watch, ref, computed } from "vue";
     import { eventBus } from "@/utils/eventBus";
 
     const liItem = [
@@ -54,12 +54,16 @@
             title : "编辑"
         }
     ];
-    const avatar = 'https://img.zcool.cn/community/0122a15d22b574a801213763e36eba.jpg@2o.jpg';
 
     const router = useRouter();
     const userInfoStore = useUserInfoStore();
     const loginStatus = ref(false);
     const avatarToolShow = ref(false);
+
+    const avatar = computed(() =>
+    {
+        return userInfoStore.getUserDetail().avatarURL;
+    })
 
     const loginHandle = () =>
     {

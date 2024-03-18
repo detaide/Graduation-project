@@ -1,5 +1,5 @@
 <template>
-    <div class="relative w-full h-full mask" @click="closeModelHandle($event.target as Element)">
+    <div class="relative w-full h-full mask" @click="closeModelHandle($event.target)">
         <div 
             class="absolute h-3/5 w-3/5 bg-white left-1/5 top-1/5 rounded-3xl
                 flex flex-row p-4
@@ -50,7 +50,7 @@
 <script setup lang="ts">
     import { ref, reactive } from "vue";
     import { NCheckbox } from "naive-ui";
-    import * as LoginModel from "@/utils/general/loginModel.ts";
+    import * as LoginModel from "@/utils/general/loginModel";
     import Vcode from "vue3-puzzle-vcode";
     import { useUserInfoStore } from "@/store/modules/userInfo";
     import { createDiscreteApi} from "naive-ui";
@@ -89,8 +89,9 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
     const {message} = createDiscreteApi(["message"]);
     const verifyType = ref<"login" | "register">("login");
 
-    const closeModelHandle = (dom : Element) => {
-        if(!dom.contains(loginModelRef.value))
+    const closeModelHandle = (dom : EventTarget | null) => {
+        if(!dom)    return;
+        if(!(dom as unknown as Element).contains(loginModelRef.value))
             return;
         LoginModel.closeLoginModel();
     }

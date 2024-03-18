@@ -19,3 +19,38 @@ export interface UserMessage
     email : string,
     avatarURL : string,
 }
+
+export interface SpaceInfo
+{
+    title : string,
+    info : string,
+    type : number,
+    id : number,
+    scanNumber : number,
+    userId : number,
+    headImage? : string,
+    outerInfo? : string,
+    publishTime : number,
+}
+
+export interface SpaceDetail
+{
+    article : Partial<SpaceInfo>,
+}
+
+export interface CommentInfoType
+{
+    nickname : string,
+    avatarURL : string,
+    id : number,
+    userId : number,
+    spaceId : number,
+    publishTime : number | string,
+    comment : string,
+    thumbs : number,
+}
+
+export interface ChannelInfo
+{
+    
+}

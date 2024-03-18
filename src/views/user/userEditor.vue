@@ -100,9 +100,9 @@
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <label for="country" class="block text-sm font-medium leading-6 text-gray-900">性别</label>
+                                    <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">性别</label>
                                     <div class="mt-2">
-                                        <select id="country" name="country" autocomplete="country-name" v-model="userMessage.gender" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                        <select id="gender" name="gender" autocomplete="gender-name" v-model="userMessage.gender" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                                         <option value="1">男</option>
                                         <option value="2">女</option>
                                         <option value="9">我不想说</option>
@@ -111,15 +111,15 @@
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <label for="country" class="block text-sm font-medium leading-6 text-gray-900">生日</label>
+                                    <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">生日</label>
                                     <n-date-picker v-model:value="userMessage.birthday" type="date" />
 
                                 </div>
 
                                 <div class="sm:col-span-3">
-                                    <label for="country" class="block text-sm font-medium leading-6 text-gray-900">校区</label>
+                                    <label for="school" class="block text-sm font-medium leading-6 text-gray-900">校区</label>
                                     <div class="mt-2">
-                                        <select id="country" name="country" autocomplete="country-name" v-model="userMessage.school" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                        <select id="school" name="school" autocomplete="school-name" v-model="userMessage.school" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                                         <option value="new_west">紫霄校区西区</option>
                                         <option value="new_center">紫霄校区中区</option>
                                         <option value="old">学园校区</option>
@@ -186,15 +186,15 @@ import { NDatePicker, useMessage } from 'naive-ui';
 
     onMounted(() =>
     {
-
-        userMessage.value = userInfoStore.userDetail as UserMessage;
-        fileImg.value = `${import.meta.env.VITE_GLOB_REMOTE_URL}/file/get_image/${userMessage.value.avatarURL}`;
+        userMessage.value = userInfoStore.getUserDetail(); 
+        // userMessage.value = Object.assign(userInfoStore.userDetail as UserMessage, userMessage.value);
+        fileImg.value = userMessage.value.avatarURL;
         formRef.value?.addEventListener("submit", async (event) =>
         {
             
             // verifySubmit();
             event.preventDefault();
-            
+            console.log(userMessage.value)
             await  userInfoStore.userMessageSubmitAPI(userMessage.value);
             
 

@@ -3,7 +3,7 @@
         <!-- <div class="fixed w-full h-1/10 bg-white z-10"><Header class="w-full h-full"/></div> -->
         <div class="flex flex-row mt-4">
             <div class=" w-4/5">
-                <UserInfo class="rounded-xl"/>
+                <UserInfo/>
                 <div class="bg-white mt-4 mx-8">
                     <div class="px-4 flex flex-row gap-x-4 h-10 border-b border-gray-200 items-center">
                         <div class="ursor-pointer nav-hover nav-active h-full flex items-center px-2 cursor-pointer" @click="changeRouterTo('userSpace')">动态</div>

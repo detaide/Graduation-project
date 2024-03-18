@@ -38,7 +38,7 @@ const routes : RouteRecordRaw[] = [
                 component : () => import("@/views/user/userSpace.vue"),
                 children : [
                     {
-                        path: "/user/userSpace/:id",
+                        path: "/user/userSpace/:spaceId",
                         name : "spaceDetail",
                         component : () => import("@/components/spaceDetail.vue")
                     }

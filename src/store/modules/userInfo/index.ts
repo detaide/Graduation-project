@@ -6,7 +6,7 @@ import { eventBus } from "@/utils/eventBus";
 import { createDiscreteApi } from "naive-ui";
 import { openLoginModel } from "@/utils/general/loginModel";
 import { UserMessage } from "@/typings";
-
+import * as general from "@/utils/general";
 
 const {message} = createDiscreteApi(["message"]);
 
@@ -35,7 +35,11 @@ export const useUserInfoStore = defineStore("userInfo-store", {
         {
             this.id = userInfo.id;
             this.username = userInfo.username;
-            this.userDetail = userInfo.userDetail;
+            if(userInfo.userDetail)
+            {
+                userInfo.userDetail!.avatarURL = general.headImg(userInfo?.userDetail?.avatarURL || '');
+                this.userDetail = userInfo.userDetail;
+            }
             setLocalStorage(this.$state);
         },
         isLogin()
@@ -61,19 +65,24 @@ export const useUserInfoStore = defineStore("userInfo-store", {
                 this.logout();
             }
 
-            return `userId=${this.id}`;
+            return `user_id=${this.id}`;
         },
         userInfoInit()
         {
 
         },
+        getUserDetail()
+        {
+            return JSON.parse(JSON.stringify(this.userDetail));
+        },
         async userMessageSubmitAPI(userMessage : UserMessage)
         {
-            await userMessageSubmitAPI(userMessage);
-
+            let {userDetail, message} = await userMessageSubmitAPI(userMessage);
             window.message.success("资料修改成功");
-            this.userDetail = userMessage;
+            userDetail.avatarURL = general.headImg(userDetail.avatarURL);
+            this.userDetail = userDetail;
             setLocalStorage(this.$state);
+            eventBus.emit("userDetailChange");
         }
     }
 })

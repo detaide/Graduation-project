@@ -27,3 +27,9 @@ export async function userMessageSubmitAPI(userMessage : UserMessage)
         data : userMessage
     })
 }
+
+export async function getUserDetail(userId : number) {
+    return get({
+        url : "/user/user_detail?userId=" + userId
+    })
+}

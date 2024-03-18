@@ -26,9 +26,9 @@
                 <div class="cursor-pointer h-full text-hover">最新</div>
             </div>
             <wc-waterfall :gap="14" :cols="3" class="px-6 py-6 w-full ">
-                <WaterBox v-for="(item, index) in navList" :key="index" 
+                <WaterBox v-for="(item, index) in allSpace" :key="index" 
                     :height="heightList[Math.floor(Math.random() * heightList.length)]"
-                    :title="item"
+                    :spaceDetail="item"
                     class="py-2"
                     @open-space="openSpaceHandler"
                 />
@@ -41,12 +41,16 @@
     import {HomeSharp} from "@vicons/ionicons5";
     import "wc-waterfall";
     import WaterBox from "@/components/waterbox.vue"
+    import { onMounted, ref } from "vue";
+    import { getAllSpaceInfoAPI } from "@/api/space";
+    import { SpaceInfo } from "@/typings";
 
     interface Emit{
         (ev : "openSpace", spaceId? : number) : void
     }
 
     const navList = ["关注","心情","校园动态","热点","关注","关注","关注","关注"];
+    const allSpace = ref<Array<SpaceInfo>>([]);
     const heightList = [32, 36, 40, 44,56, 52, 72, 80, 96];
     const emit = defineEmits<Emit>();
 
@@ -54,6 +58,26 @@
     {
         emit("openSpace", spaceId);
     }
+
+    onMounted(async () =>
+    {
+        const regex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
+        let spaceTotalRet = await getAllSpaceInfoAPI<Array<SpaceInfo>>();
+        let newList : Array<SpaceInfo> = [];
+        spaceTotalRet.forEach((item) => {
+            let info = item.info;
+            let matchInfo = info.match(regex);
+            if(matchInfo)
+            {
+                newList.push({
+                    ...item,
+                    headImage : matchInfo[1],
+                    outerInfo : info.replace(regex, ""),
+                })
+            }
+        })
+        allSpace.value = newList;
+    })
 </script>
     
 <style lang="less" scoped>

@@ -69,7 +69,7 @@ import { error } from "console";
                 info : vditor.value.getVditorValue!(),
                 type : 1
             });
-            console.log(res)
+            window.message.success("发布成功");
         }catch(err : any)
         {
             if(err.message === "Request failed with status code 401")

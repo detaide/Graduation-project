@@ -1,7 +1,7 @@
 <template>
-    <div class="ml-8 w-9/10 h-64 bg-white p-8 flex flex-row">
+    <div class="ml-8 w-9/10 h-64 bg-white p-8 flex flex-row rounded-xl">
         <div class="w-4/5 border-r h-full border-gray-300 flex flex-row gap-12 justify-center">
-            <div class="w-32 h-32 rounded-full bg-gray-300"></div>
+            <img :src="userInfo.avatarURL" class="w-32 h-32 rounded-full bg-gray-300"/>
             <div class="w-52">
                 <div class="flex flex-row justify-between items-center">
                     <div class="text-2xl font-bold"> {{ userInfo.nickname }}
@@ -46,12 +46,14 @@
 <script setup lang="ts">
     import { Icon } from "@vicons/utils";
     import { MaleSharp, FemaleSharp } from "@vicons/ionicons5";
-    import { onMounted, reactive, ref } from "vue";
+    import { onMounted, reactive, ref, watch } from "vue";
     import { NModal } from "naive-ui";
     import { useRouter } from "vue-router";
     import UserEditor from "./userEditor.vue";
     import { useUserInfoStore } from "@/store/modules/userInfo";
 import { UserMessage } from "@/typings";
+import { eventBus } from "@/utils/eventBus";
+
 
 
     interface UserInfo extends UserMessage{
@@ -77,12 +79,23 @@ import { UserMessage } from "@/typings";
         showEditor.value = true;
     }
 
-    onMounted(() =>
+    eventBus.on("userDetailChange", () =>
+    {
+        userInfoInit();
+    })
+    
+    const userInfoInit = () =>
     {
         userInfo.value = {
             ...userInfo.value,
             ...userInfoStore.userDetail,
+            avatarURL : userInfoStore.userDetail!.avatarURL
         }
+    }
+
+    onMounted(() =>
+    {
+        userInfoInit()
     })
 </script>
     

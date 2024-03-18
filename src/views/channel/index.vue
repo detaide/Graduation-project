@@ -35,11 +35,26 @@
             <RightNavigation class="w-3/4 bg-white rounded-lg"/>
         </div>
 
+        <div class="fixed bottom-32 right-16 text-4xl text-white w-12 h-12 bg-blue-500 text-center rounded-full cursor-pointer" @click="createChannelHandle()">+</div>
+        <div class="fixed bottom-12 right-16 text-2xl  w-12 h-12  text-center rounded-full border  flex items-center justify-center shadow-sm cursor-pointer" @click="BackToTop">
+            <Icon :size="30">
+                <ArrowUp/>
+            </Icon>
+        </div>
+
+        <n-modal v-model:show="showNewChannel">
+            <ChannelCreate/>
+        </n-modal> 
     </div>
 </template>
 <script setup lang="ts">
     import LeftNavigation from "./leftNavigation.vue";
     import RightNavigation from "./rightNavigation.vue";
+    import {Icon} from "@vicons/utils";
+    import {ArrowUp} from "@vicons/ionicons5";
+    import { ref } from "vue";
+    import { NModal } from "naive-ui";
+    import ChannelCreate from "./channelCreate.vue";
 
     let hotBox = [
         {
@@ -48,6 +63,8 @@
             comment : 12456743
         },
     ];
+
+    const showNewChannel = ref(false);
 
     for(let i = 0; i < 11; i++)
     {
@@ -59,6 +76,17 @@
         
         return (value > 10000) ?   (value / 1000).toFixed(1) + 'k' : value; 
     }
+
+    const BackToTop = () =>
+    {
+        document.querySelector(".top")?.scrollIntoView({behavior : "smooth"});
+    }
+
+    const createChannelHandle = () =>
+    {
+        showNewChannel.value = true;
+    }
+
 </script>
 <style lang="less" scoped>
     

@@ -1,7 +1,7 @@
 <template>
     <div class="w-full  pb-4">
         <!-- <div class="fixed w-full h-1/10 bg-white z-10"><Header class="w-full h-full"/></div> -->
-        <Content class="w-full" 
+        <Comment class="w-full" 
             @open-space="openSpaceHandler"/>
         <router-view></router-view>
         <div class="fixed bottom-32 right-16 text-4xl text-white w-12 h-12 bg-blue-500 text-center rounded-full cursor-pointer" @click="routerHandler.openEditor()">+</div>
@@ -14,7 +14,7 @@
 </template>
 <script setup lang="ts">
     // import Header from "@/views/header/header.vue"
-    import Content from "@/views/content/content.vue"
+    import Comment from "@/views/comment/comment.vue"
     import { useRouter } from "vue-router";
     import {Icon} from "@vicons/utils";
     import {ArrowUp} from "@vicons/ionicons5";
