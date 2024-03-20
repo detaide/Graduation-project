@@ -168,9 +168,11 @@ import { NDatePicker, useMessage } from 'naive-ui';
     const fileInputRef = ref<HTMLInputElement>();
     const fileImg = ref<string>('');
     const userInfoStore = useUserInfoStore();
-
+    const props = defineProps<{
+        userId : number
+    }>();
     
-    let userMessage = ref<UserMessage>({
+    let userMessage = ref<Partial<UserMessage>>({
         nickname : '',
         description : '',
         address : '',
@@ -182,13 +184,14 @@ import { NDatePicker, useMessage } from 'naive-ui';
         school : '',
         avatarURL : '',
         birthday : new Date().getTime(),
+
     });
 
     onMounted(() =>
     {
         userMessage.value = userInfoStore.getUserDetail(); 
         // userMessage.value = Object.assign(userInfoStore.userDetail as UserMessage, userMessage.value);
-        fileImg.value = userMessage.value.avatarURL;
+        fileImg.value = userMessage.value.avatarURL!;
         formRef.value?.addEventListener("submit", async (event) =>
         {
             

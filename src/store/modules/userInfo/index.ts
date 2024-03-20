@@ -7,6 +7,7 @@ import { createDiscreteApi } from "naive-ui";
 import { openLoginModel } from "@/utils/general/loginModel";
 import { UserMessage } from "@/typings";
 import * as general from "@/utils/general";
+import { router } from "@/router";
 
 const {message} = createDiscreteApi(["message"]);
 
@@ -75,7 +76,7 @@ export const useUserInfoStore = defineStore("userInfo-store", {
         {
             return JSON.parse(JSON.stringify(this.userDetail));
         },
-        async userMessageSubmitAPI(userMessage : UserMessage)
+        async userMessageSubmitAPI(userMessage : Partial<UserMessage>)
         {
             let {userDetail, message} = await userMessageSubmitAPI(userMessage);
             window.message.success("资料修改成功");
@@ -83,6 +84,12 @@ export const useUserInfoStore = defineStore("userInfo-store", {
             this.userDetail = userDetail;
             setLocalStorage(this.$state);
             eventBus.emit("userDetailChange");
+        },
+        async jump2UserHome(userId? : number, isSelf? : boolean)
+        {
+            if(isSelf)
+                userId = this.id;
+            router.push({path : "/user" + (userId ? "/" + userId : "")})
         }
     }
 })

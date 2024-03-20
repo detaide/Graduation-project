@@ -74,7 +74,7 @@
 
     const jump2Home = () =>
     {
-        router.push("/user");
+        userInfoStore.jump2UserHome(0, true);
         avatarToolShow.value = false;
     }
 

@@ -13,10 +13,17 @@ export async function publishSpaceAPI(spaceInfo : SpaceInfo)
     })
 }
 
-export async function getAllSpaceInfoAPI<T>() : Promise<T>
+export async function getAllSpaceInfoAPI<T>(type? : number) : Promise<T>
 {
     return await get({
-        url : "/space/all_space"
+        url : "/space/all_space" + (type ? "?type=" + type : "")
+    }) as T
+}
+
+export async function bringAppSpaceByUserIdAPI<T>(userId? : number) : Promise<T>
+{
+    return await get({
+        url : "/space/space_info_by_user_id?user_id=" + userId
     }) as T
 }
 
@@ -31,6 +38,7 @@ export async function publishSpaceCommentAPI(comment : string, spaceId : number)
 {
     const userInfo = useUserInfoStore();
     let userQuery = userInfo.userQuery();
+    console.log(userQuery);
     return await post({
         url : "/space/publish_comment?" + userQuery,
         data : {
@@ -63,6 +71,12 @@ export async function addThumbsAPI(spaceId : number)
         data : {
             spaceId
         }
+    })
+}
+
+export async function getSpaceType() {
+    return get({
+        url : "/space/space_type"
     })
 }
 export interface SpaceInfo

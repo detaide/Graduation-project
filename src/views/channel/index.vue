@@ -9,18 +9,25 @@
             <!-- channel-hot-box -->
             <div class="pt-4 flex overflow-x-hidden gap-x-16 gap-y-4 flex-wrap">
                 <div class="flex flex-row gap-2 cursor-pointer" 
-                    v-for="(item, index) in hotBox" :key="index"
+                    v-for="(item, index) in hotData" :key="index"
+                    @click="jump2ChannelPage(item?.name!)"
                 >
-                    <div class="w-20 h-20 bg-gray-400 rounded-lg active:scale-95 transform"></div>
+                    <img class="w-20 h-20 bg-gray-400 rounded-lg active:scale-95 transform" :src="general.headImg(item.imgURL)" />
                     <div class="flex flex-col gap-y-1">
-                        <div>{{ item.channelName }}</div>
-                        <div class="flex gap-1 items-center">
-                            <div class="w-4 h-4 bg-gray-400"></div>
-                            <div class="text-gray-400 text-xs">{{ value2Thousand(item.member) }}</div>
+                        <div>{{ item?.name }}</div>
+                        <div class="flex gap-1 items-center text-gray-400">
+                            <!-- <div class="w-4 h-4 bg-gray-400"></div> -->
+                            <Icon :size="16">
+                                <People/>
+                            </Icon>
+                            <div class="text-gray-400 text-xs">{{ value2Thousand(item?.follow) || 0 }}</div>
                         </div>
-                        <div class="flex gap-1 items-center">
-                            <div class="w-4 h-4 bg-gray-400"></div>
-                            <div class="text-gray-400 text-xs">{{ value2Thousand(item.comment) }}</div>
+                        <div class="flex gap-1 items-center text-gray-400">
+                            <!-- <div class="w-4 h-4 bg-gray-400"></div> -->
+                            <Icon :size="16">
+                                <ChatboxEllipses/>
+                            </Icon>
+                            <div class="text-gray-400 text-xs">{{ value2Thousand(item?.itemNumber) || 0 }}</div>
                         </div>
                     </div>
                 </div>
@@ -51,10 +58,14 @@
     import LeftNavigation from "./leftNavigation.vue";
     import RightNavigation from "./rightNavigation.vue";
     import {Icon} from "@vicons/utils";
-    import {ArrowUp} from "@vicons/ionicons5";
-    import { ref } from "vue";
+    import {ArrowUp, People, ChatboxEllipses, Clipboard, DocumentText} from "@vicons/ionicons5";
+    import { onMounted, ref } from "vue";
     import { NModal } from "naive-ui";
     import ChannelCreate from "./channelCreate.vue";
+    import { bringAllChannelAPI } from "@/api/channel";
+    import { ChannelInfo } from "@/typings";
+    import * as general from "@/utils/general";
+import { useRouter } from "vue-router";
 
     let hotBox = [
         {
@@ -65,6 +76,15 @@
     ];
 
     const showNewChannel = ref(false);
+    const hotData = ref<Partial<ChannelInfo>>({});
+    const router = useRouter();
+
+    onMounted(async () =>
+    {
+        let ret = await bringAllChannelAPI();
+        hotData.value = ret as unknown as Partial<ChannelInfo>;
+        console.log(hotData.value)
+    })
 
     for(let i = 0; i < 11; i++)
     {
@@ -85,6 +105,13 @@
     const createChannelHandle = () =>
     {
         showNewChannel.value = true;
+    }
+
+    const jump2ChannelPage = (channelTitle : string) =>
+    {
+        router.push({
+            path : "/channelPage/" + channelTitle
+        })
     }
 
 </script>

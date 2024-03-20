@@ -1,9 +1,9 @@
 <template>
-    <div class="">
+    <div class="" v-if="userId">
         <!-- <div class="fixed w-full h-1/10 bg-white z-10"><Header class="w-full h-full"/></div> -->
         <div class="flex flex-row mt-4">
             <div class=" w-4/5">
-                <UserInfo/>
+                <UserInfo :userId="userId"/>
                 <div class="bg-white mt-4 mx-8">
                     <div class="px-4 flex flex-row gap-x-4 h-10 border-b border-gray-200 items-center">
                         <div class="ursor-pointer nav-hover nav-active h-full flex items-center px-2 cursor-pointer" @click="changeRouterTo('userSpace')">动态</div>
@@ -31,15 +31,15 @@
     import WaterBox from "@/components/waterbox.vue";
     import UserInfo from "./userInfo.vue";
     import Weather from "@/components/weather/weather.vue"
-    import { useRouter } from "vue-router";
+    import { useRoute, useRouter } from "vue-router";
     import {Icon} from "@vicons/utils";
     import {ArrowUp} from "@vicons/ionicons5";
     import * as routerHandler from "@/router/routeHandle";
+import { onMounted, ref } from "vue";
 
-    const userSpace = ["登录","标题记录","我说这是一个标题","为哦什么","看起来是正确的","元始天尊","标题记录","我说这是一个标题","为哦什么","看起来是正确的","元始天尊"];
-    const heightList = [32, 36, 40, 44,56, 52, 72, 80, 96];
-    const userNav = ["动态","频道"];
     const router = useRouter();
+    const route = useRoute();
+    const userId = ref(0);
     
     const openSpaceHandler = (spaceId? : number) =>
     {
@@ -55,6 +55,11 @@
     {
         router.push({name});
     }
+
+    onMounted(() =>
+    {
+        userId.value = +(route.params.userId as string);
+    })
 
 </script>
     

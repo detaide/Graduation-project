@@ -27,13 +27,18 @@ const routes : RouteRecordRaw[] = [
         ]
     },
     {
-        path : "/user",
+        path : "/user/:userId",
         name : "user",
         component : () => import("@/views/user/index.vue"),
         redirect : {name : "userSpace"},
         children: [
+            // {
+            //     path : "/user/:userId",
+            //     name : "userDetail",
+            //     component : () => import("@/views/user/index.vue")
+            // },
             {
-                path : "userSpace",
+                path : "/user/:userId/userSpace",
                 name : "userSpace",
                 component : () => import("@/views/user/userSpace.vue"),
                 children : [

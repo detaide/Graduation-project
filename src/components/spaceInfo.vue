@@ -8,11 +8,12 @@
             "
         >
             <div class="flex flex-row items-center gap-x-2 cursor-pointer">
-                <img :src="userInfoStore.getUserDetail()?.avatarURL" class="w-10 h-10 rounded-full bg-gray-400"/>
+                <img :src="userInfo.avatarURL" class="w-10 h-10 rounded-full bg-gray-400" @click="userInfoStore.jump2UserHome(userInfo.userId)"/>
                 <div class="text-gray-600 text-base">{{ userInfo.nickname }}</div>
             </div>
             <div class="w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
-                <div class="text-white font-bold">关注</div>
+                <div class="text-white font-bold" v-show="!isFollow" @click="followHandle">关注</div>
+                <div class="text-white font-bold" v-show="isFollow" @click="unFollowHandle">已关注</div>
             </div>
         </div>
 
@@ -23,7 +24,11 @@
                     <!-- {{ textHTML }} -->
                     <div v-html="textHTML"></div>
                 </span>
-                <div class="px-4 py-6 text-gray-400 text-sm"> 发布于 {{ general.timeFormatter(props.spaceInfo.publishTime || new Date().getTime()) }}</div>
+                <div class="px-4 py-6 text-gray-400 text-sm">
+                    <div>类型： {{ props.spaceInfo.typeName }}</div>
+                    <div>发布于 {{ general.timeFormatter(props.spaceInfo.publishTime || new Date().getTime()) }}</div>
+                    
+                </div>
             </div>
             <div>
                 <Space-Comment :spaceId="props.spaceInfo.id" ref="spaceComment"/>
@@ -33,7 +38,7 @@
         <div class="h-1/10 w-full 
             absolute bottom-0 left-0
             px-2
-            flex flex-row items-center justify-between"
+            flex flex-row items-center justify-between border-t-2 border-gray-300"
             v-if="!commentModelShow"
         >
             <div class="bg-gray-200 w-32 h-10 rounded-full flex flex-row items-center px-2 cursor-pointer" @click="commentModelHandle" >
@@ -105,9 +110,10 @@
     import {computed, onMounted, ref} from "vue";
     import { CommentInfoType, SpaceInfo, UserMessage } from '@/typings';
     import * as general from "@/utils/general";
-    import { getUserDetail } from '@/api/userInfo';
+    import { followUserAPI, followUserCancelAPI, getUserDetail, getUserFollowStatusAPI } from '@/api/userInfo';
     import { bringSpaceCommentBySpaceId, publishSpaceCommentAPI } from '@/api/space';
     import { useUserInfoStore } from '@/store/modules/userInfo';
+import { followChannel } from '@/api/channel';
 
     interface Props
     {
@@ -120,7 +126,7 @@
     }
 
     const textHTML = ref('');
-
+    const isFollow = ref(false);
     const props = defineProps<Props>();
     const userInfo = ref<Partial<UserMessage>>({});
     const defaultHeadImg = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80";
@@ -153,11 +159,12 @@ It was moments like these that made life worth living, and I was grateful for th
 
     onMounted(async () =>
     {
+        let followStatus = await getUserFollowStatusAPI(props.spaceInfo?.userId!);
+        isFollow.value = followStatus as unknown as boolean;
         textHTML.value = await md2html(props?.spaceInfo?.info || defaultText);
         let userDetailRet = await getUserDetail(props.spaceInfo?.userId! || 0) as Partial<UserMessage>;
         userDetailRet.avatarURL = headImg(userDetailRet?.avatarURL);
         userInfo.value = userDetailRet;
-        
     })
 
     const commentModelHandle = () =>
@@ -171,6 +178,20 @@ It was moments like these that made life worth living, and I was grateful for th
         commentModelShow.value = false;
         spaceComment.value?.addCommenthandle(commentInfo);
         window.message.success("回复成功");
+    }
+
+    const followHandle = async () =>
+    {
+        let ret = await followUserAPI(userInfo.value.userId!);
+        window.message.success(ret);
+        isFollow.value = true;
+    }
+
+    const unFollowHandle = async () =>
+    {
+        let ret = await followUserCancelAPI(userInfo.value.userId!)
+        window.message.success(ret);
+        isFollow.value = false;
     }
 
 

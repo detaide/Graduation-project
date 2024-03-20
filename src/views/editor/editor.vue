@@ -1,12 +1,23 @@
 <template>
     <div class="px-20">
         <div class="w-full flex flex-row pt-4 px-4">
+            <n-cascader
+            :options="categoryOptions"
+            v-model:value="spaceType"
+            default-value="请选择分类"
+            label-field="key"
+            value-field="value"
+            children-field="child"
+            class="w-64"
+            :size="'large'"
+        />
             <input placeHolder="请输入标题" class="w-5/6 h-16 px-4 text-xl font-bold input-focus-border mb-2" v-model="title"/>
             <div 
                 class="ml-4 text-center text-white text-3xl bg-blue-500 w-1/12 h-16 leading-loose active:scale-95 transform cursor-pointer rounded-r-md"
                 @click="publishSpace"
             >发布</div>
         </div>
+        
         
         <Vditor ref="vditor"/>
         
@@ -15,11 +26,11 @@
 <script setup lang='ts'>
     import { computed, onMounted, ref } from "vue";
     import Vditor from "./vditor.vue";
-    import { publishSpaceAPI } from "@/api/space";
+    import { getSpaceType, publishSpaceAPI } from "@/api/space";
     import { openLoginModel } from "@/utils/general/loginModel";
-import { createDiscreteApi } from "naive-ui";
-import { useUserInfoStore } from "@/store/modules/userInfo";
-import { error } from "console";
+    import { createDiscreteApi } from "naive-ui";
+    import { useUserInfoStore } from "@/store/modules/userInfo";
+    import {NCascader} from "naive-ui";
 
     interface vditorRef{
         getVditorValue? : () => any,
@@ -29,15 +40,27 @@ import { error } from "console";
     const vditor = ref<vditorRef>({});
     const {message} = createDiscreteApi(["message"]);
     const title = ref("Hello");
+    const spaceType = ref();
 
     // const getVditorValue = computed(() =>
     // {
     //     return vditor.value.getVditorValue!();
     // })
 
-    onMounted(() =>
+    const categoryOptions = ref<Array<any>>([]);
+
+    onMounted(async () =>
     {
-        console.log(vditor.value)
+
+        let spaceTypeList = await getSpaceType() as unknown as {[key : string] : string};
+        for(let key in spaceTypeList)
+        {
+            categoryOptions.value.push({
+                key : spaceTypeList[key],
+                value : key
+            })
+        }
+        console.log(categoryOptions.value)
     })
 
     const VerifyPublish = () =>
@@ -67,7 +90,7 @@ import { error } from "console";
             let res = await publishSpaceAPI({
                 title : title.value,
                 info : vditor.value.getVditorValue!(),
-                type : 1
+                type : spaceType.value
             });
             window.message.success("发布成功");
         }catch(err : any)
@@ -87,10 +110,14 @@ import { error } from "console";
 
 </script>
     
-<style lang="less" scoped>
+<style lang="less">
     .input-focus-border:focus{
         outline: 1px solid @color-bottom-blue;
         border-radius:4px;
         // outline : 1px solid @color-gray
+    }
+
+    .n-cascader .n-base-selection-label{
+        height: 4rem;
     }
 </style>

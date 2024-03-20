@@ -18,7 +18,7 @@ export async function loginAPI<T extends Partial<LoginObj>>( loginInfo : T) {
     })
 }
 
-export async function userMessageSubmitAPI(userMessage : UserMessage)
+export async function userMessageSubmitAPI(userMessage : Partial<UserMessage>)
 {
     const userInfo = useUserInfoStore();
     let userQuery = userInfo.userQuery();
@@ -29,7 +29,41 @@ export async function userMessageSubmitAPI(userMessage : UserMessage)
 }
 
 export async function getUserDetail(userId : number) {
-    return get({
-        url : "/user/user_detail?userId=" + userId
+    return await get({
+        url : "/user/user_detail?user_id=" + userId
+    })
+}
+
+export async function followUserAPI(followedId : number) {
+    const userInfo = useUserInfoStore();
+    let userQuery = userInfo.userQuery();
+    return await post({
+        url : "/user/user_follow?" + userQuery,
+        data : {
+            followedId
+        }
+    })
+}
+
+export async function followUserCancelAPI(followedId : number) {
+    const userInfo = useUserInfoStore();
+    let userQuery = userInfo.userQuery();
+    return await post({
+        url : "/user/user_follow_cancel?" + userQuery,
+        data : {
+            followedId
+        }
+    })
+}
+
+export async function getUserFollowStatusAPI(userId : number) {
+    const userInfo = useUserInfoStore();
+    if(userId === userInfo.id)
+    {
+        return true;
+    }
+
+    return await get({
+        url : '/user/follow_status?follower_id=' + userId + '&followed_id=' + userInfo.id 
     })
 }

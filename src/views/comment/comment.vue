@@ -2,7 +2,7 @@
     <div class=" py-4 px-40 flex flex-row gap-x-10 h-full">
         <div class="fixed">
             <div class="w-52 bg-white h-5/6 rounded flex  flex-col color-deep-gray p-2">
-            <div class="py-4 cursor-pointer flex flex-row items-center gap-x-2 nav-hover w-full rounded pl-6">
+            <div class="py-4 cursor-pointer flex flex-row items-center gap-x-2 nav-hover w-full rounded pl-6" @click="navChangeHandle()">
                 <Icon size="20">
                     <HomeSharp/>
                 </Icon>
@@ -10,11 +10,11 @@
             </div>
             <div class="w-3/4 mx-auto bg-gray-300 border-b-2"></div>
             <ul class="text-center w-full">
-                <li v-for="(item,index ) in navList" :key="index" class="p-4 cursor-pointer flex flex-row items-center  gap-x-2 nav-hover rounded pl-6">
+                <li v-for="(item,index ) in navList" :key="index" @click="navChangeHandle(+item.key as number)" class="p-4 cursor-pointer flex flex-row items-center  gap-x-2 nav-hover rounded pl-6">
                     <Icon size="20">
                         <HomeSharp/>
                     </Icon>
-                    <div>{{ item }}</div>
+                    <div>{{ item.value }}</div>
                 </li>
             </ul>
             
@@ -42,14 +42,15 @@
     import "wc-waterfall";
     import WaterBox from "@/components/waterbox.vue"
     import { onMounted, ref } from "vue";
-    import { getAllSpaceInfoAPI } from "@/api/space";
+    import { getAllSpaceInfoAPI, getSpaceType } from "@/api/space";
     import { SpaceInfo } from "@/typings";
+    import { eventBus } from "@/utils/eventBus";
 
     interface Emit{
         (ev : "openSpace", spaceId? : number) : void
     }
 
-    const navList = ["关注","心情","校园动态","热点","关注","关注","关注","关注"];
+    const navList = ref<Array<{[key : string] : string}>>([]);
     const allSpace = ref<Array<SpaceInfo>>([]);
     const heightList = [32, 36, 40, 44,56, 52, 72, 80, 96];
     const emit = defineEmits<Emit>();
@@ -61,10 +62,26 @@
 
     onMounted(async () =>
     {
-        const regex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
         let spaceTotalRet = await getAllSpaceInfoAPI<Array<SpaceInfo>>();
+        allSpace.value = await spaceDataFormatter(spaceTotalRet);
+
+        const spaceTypeList = await getSpaceType() as unknown as {[key : string] : string};
+        for(let key in spaceTypeList)
+        {
+            navList.value.push({
+                key : key,
+                value : spaceTypeList[key]
+            })
+        }
+    })
+
+    const spaceDataFormatter = async (spaceInfo  : Array<SpaceInfo>) =>
+    {
         let newList : Array<SpaceInfo> = [];
-        spaceTotalRet.forEach((item) => {
+        const regex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
+        
+
+        spaceInfo.forEach((item) => {
             let info = item.info;
             let matchInfo = info.match(regex);
             if(matchInfo)
@@ -76,8 +93,16 @@
                 })
             }
         })
-        allSpace.value = newList;
-    })
+
+        return newList;
+    }
+
+    const navChangeHandle = async (type? : number) =>
+    {
+        // eventBus.emit("navChange", type);
+        let ret =  await getAllSpaceInfoAPI(type) as unknown as Array<SpaceInfo>;
+        allSpace.value = await spaceDataFormatter(ret);
+    }
 </script>
     
 <style lang="less" scoped>
