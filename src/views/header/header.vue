@@ -5,12 +5,13 @@
                 <div class=" text-4xl font-bold ">LOGO</div>
             </div>
             <ul class="flex flex-row pl-6">
-                <li v-for="(item, index) in liItem" :key="index" class="flex justify-center text-sm items-center text-center px-2 py-0.5 hover-bottom-blue hover-blue"><a @click="jumpTo(item.key)" class="cursor-pointer">{{ item.title }}</a></li>
+                <li v-for="(item, index) in liItem" :key="index" :class="(item.key === activeShow) && 'nav-active-header'" class="flex justify-center text-sm items-center text-center px-2 py-0.5 hover-bottom-blue hover-blue"><a @click="jumpTo(item.key)" class="cursor-pointer">{{ item.title }}</a></li>
+                <li :class="('selfHome' === activeShow) && 'nav-active-header'" class="flex justify-center text-sm items-center text-center px-2 py-0.5 hover-bottom-blue hover-blue"><a @click="jumpTo('selfHome')" class="cursor-pointer">{{ "我的主页" }}</a></li>
             </ul>
        </div>
 
         <div class="flex items-center justify-center gap-x-2 cursor-pointer">
-            <Search/>
+            <Search @search="seachHandle"/>
             <div class="relative">
                 <n-avatar round :src="avatar" @click="loginHandle" v-show="loginStatus"/>
                 <div class="absolute -left-8 top-12 w-24 h-24 bg-white border border-gray-400 p-1 rounded-lg" v-show="avatarToolShow">
@@ -32,33 +33,37 @@
     import { onMounted, watch, ref, computed } from "vue";
     import { eventBus } from "@/utils/eventBus";
 
-    const liItem = [
+    type ItemKeyType = "Home" | "channel" | "editor" | "selfHome";
+
+    const liItem : Array<{key : ItemKeyType, title : string}> = [
+        // {
+        //     key : "Home",
+        //     title : "首页"
+        // },
         {
             key : "Home",
-            title : "首页"
-        },
-        {
-            key : "",
             title : "动态"
         },
-        {
-            key : "",
-            title : "校园集市"
-        },
+        // {
+        //     key : "",
+        //     title : "校园集市"
+        // },
         {
             key : "channel",
             title :  "校园频道"
         },
-        {
-            key : "editor",
-            title : "编辑"
-        }
+        // {
+        //     key : "editor",
+        //     title : "编辑"
+        // }
     ];
 
+    
     const router = useRouter();
     const userInfoStore = useUserInfoStore();
     const loginStatus = ref(false);
     const avatarToolShow = ref(false);
+    const activeShow = ref<ItemKeyType>("Home");
 
     const avatar = computed(() =>
     {
@@ -76,6 +81,7 @@
     {
         userInfoStore.jump2UserHome(0, true);
         avatarToolShow.value = false;
+        activeShow.value = "selfHome";
     }
 
     const logout = () =>
@@ -90,27 +96,37 @@
         LoginModel.openLoginModel();
     }
 
-    const jumpTo = (path : string) =>
+    const jumpTo = (path : ItemKeyType) =>
     {
+        if(path === "selfHome")
+        {
+            jump2Home();
+            return;
+        }
+        activeShow.value = path;
         router.push('/' + path);
     }
 
-    onMounted(() =>
+    onMounted(async () =>
     {
-        loginStatus.value = userInfoStore.isLogin();
+        loginStatus.value = await userInfoStore.isLogin();
     })
 
-    eventBus.on("Login", () =>
+    eventBus.on("Login", async () =>
     {
-        console.log("login")
-        loginStatus.value = userInfoStore.isLogin();
+        loginStatus.value = await userInfoStore.isLogin();
     })
 
     eventBus.on("logout", () =>
     {
         loginStatus.value = false;
-        LoginModel.openLoginModel();
+        // LoginModel.openLoginModel();
     })
+
+    const seachHandle = (keywords : string) =>
+    {
+        router.push("/search/" + keywords);
+    }
 
 </script>
     
@@ -127,5 +143,9 @@
     
     .min-w-200{
         min-width: 200px;
+    }
+    .nav-active-header{
+        border-bottom: 2px solid @color-bottom-blue;
+        color: @color-bottom-blue;
     }
 </style>

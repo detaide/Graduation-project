@@ -39,6 +39,7 @@ import { CommentInfoType } from "@/typings";
         contetnInfo.avatarURL = general.headImg(contetnInfo.avatarURL);
         contetnInfo.publishTime = general.timeFormatter(contetnInfo.publishTime as number, true);
         contetnInfo && commentInfoRef.value.unshift(contetnInfo)
+        return commentInfoRef.value.length;
     }
 
     defineExpose({

@@ -6,8 +6,9 @@
                 <UserInfo :userId="userId"/>
                 <div class="bg-white mt-4 mx-8">
                     <div class="px-4 flex flex-row gap-x-4 h-10 border-b border-gray-200 items-center">
-                        <div class="ursor-pointer nav-hover nav-active h-full flex items-center px-2 cursor-pointer" @click="changeRouterTo('userSpace')">动态</div>
-                        <div class="ursor-pointer nav-hover h-full flex items-center px-2 cursor-pointer" @click="changeRouterTo('userChannel')">频道</div>
+                        <div :class="(activeShow === 'userSpace') && 'nav-active'" class="ursor-pointer nav-hover h-full flex items-center px-2 cursor-pointer" @click="changeRouterTo('userSpace')">动态</div>
+                        <div :class="(activeShow === 'userChannel') && 'nav-active'" class="ursor-pointer nav-hover h-full flex items-center px-2 cursor-pointer" @click="changeRouterTo('userChannel')">频道</div>
+                        <div :class="(activeShow === 'userCollection') && 'nav-active'" class="ursor-pointer nav-hover h-full flex items-center px-2 cursor-pointer" @click="changeRouterTo('userCollection')">收藏</div>
                     </div>
                     <router-view class="w-full"></router-view>
                 </div>
@@ -37,9 +38,13 @@
     import * as routerHandler from "@/router/routeHandle";
 import { onMounted, ref } from "vue";
 
+    type activeType = "userSpace" | "userChannel" | "userCollection"
+
     const router = useRouter();
     const route = useRoute();
     const userId = ref(0);
+    const activeShow = ref<activeType>("userSpace");      // Space Channel Collection
+
     
     const openSpaceHandler = (spaceId? : number) =>
     {
@@ -51,14 +56,16 @@ import { onMounted, ref } from "vue";
         document.querySelector(".top")?.scrollIntoView({behavior : "smooth"});
     }
 
-    const changeRouterTo = (name : string) =>
+    const changeRouterTo = (name : activeType) =>
     {
+        activeShow.value = name;
         router.push({name});
     }
 
     onMounted(() =>
     {
         userId.value = +(route.params.userId as string);
+        console.log(userId.value);
     })
 
 </script>

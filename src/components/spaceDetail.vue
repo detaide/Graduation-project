@@ -51,7 +51,7 @@
 
     onMounted(async () =>
     {
-        console.log( typeof route.params.spaceId);
+        console.log( route.params.spaceId);
         let spaceDetailRet = await bringSpaceDetailAPI<SpaceDetail>(+(route.params.spaceId as string));
         let spaceDetailArticle = spaceDetailRet.article;
         

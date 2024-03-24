@@ -8,9 +8,9 @@
             
         </div>
         <div v-show="!love" class="w-full flex justify-center border rounded-lg">
-            <div class="py-4 text-gray-400 " v-show="!followList.length">空空如也...</div>
-            <div class="flex w-full flex-col gap-y-2">
-                <div v-for="(item, index) in followList" :key="index" class="flex justify-start p-2 boredr border-gray-400 gap-x-2" @click="jump2channel(item.name)">
+            <div class="py-4 text-gray-400 w-full text-center" v-show="!followList.length">空空如也...</div>
+            <div class="flex w-full flex-col gap-y-2" v-show="followList.length">
+                <div v-for="(item, index) in followList" :key="index" class="flex justify-start p-2 boredr border-gray-400 gap-x-2 cursor-pointer" @click="jump2channel(item.name)">
                     <img class="w-16 h-16 border bg-gray-400 rounded-lg" :src="general.headImg(item.imgURL)"/>
                     <div class="pt-1">
                         <div class="text-base">{{ item.name }}</div>

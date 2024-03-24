@@ -1,4 +1,6 @@
 export * from "./loginModel";
+import { useUserInfoStore } from '@/store/modules/userInfo';
+import { TUIKitLogin } from "@/TUIKit";
 
 const defaultHeadImg = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80";
 export function timeFormatter(timeStamp? : number, isUnix : boolean = true, format : string = "yyyy-MM-dd HH:mm:ss")
@@ -27,3 +29,11 @@ export function headImg(imageName : string)
 {
     return imageName ?  `${import.meta.env.VITE_GLOB_REMOTE_URL}/file/get_image/${imageName}` : defaultHeadImg;
 }
+
+export async function init()
+{
+    const userInfoStore = useUserInfoStore();
+    let cookieStatus = await userInfoStore.checkCookie();
+    await cookieStatus && TUIKitLogin(userInfoStore.id!.toString());
+}
+

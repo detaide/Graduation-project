@@ -1,6 +1,7 @@
 import type { App } from "vue"
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
+import {usePermission} from "./permision";
 
 const routes : RouteRecordRaw[] = [
     {
@@ -29,22 +30,20 @@ const routes : RouteRecordRaw[] = [
     {
         path : "/user/:userId",
         name : "user",
+        meta : {
+            requiresAuth : true,
+        },
         component : () => import("@/views/user/index.vue"),
         redirect : {name : "userSpace"},
         children: [
-            // {
-            //     path : "/user/:userId",
-            //     name : "userDetail",
-            //     component : () => import("@/views/user/index.vue")
-            // },
             {
                 path : "/user/:userId/userSpace",
                 name : "userSpace",
                 component : () => import("@/views/user/userSpace.vue"),
                 children : [
                     {
-                        path: "/user/userSpace/:spaceId",
-                        name : "spaceDetail",
+                        path: ":spaceId",
+                        name : "userSpaceDetail",
                         component : () => import("@/components/spaceDetail.vue")
                     }
                 ]
@@ -53,6 +52,18 @@ const routes : RouteRecordRaw[] = [
                 path : "userChannel",
                 name : "userChannel",
                 component : () => import("@/views/user/userChannel.vue")
+            },
+            {
+                path : "/user/:userId/userCollection",
+                name : "userCollection",
+                component : () => import("@/views/user/userCollection.vue"),
+                children : [
+                    {
+                        path: ":spaceId",
+                        name : "userCollectionDetail",
+                        component : () => import("@/components/spaceDetail.vue")
+                    }
+                ]
             }
             
         ]
@@ -76,6 +87,18 @@ const routes : RouteRecordRaw[] = [
         path : "/commentInfo/:commentId",
         name : "commentInfo",
         component : () => import("@/views/channel/commentInfo.vue")
+    },
+    {
+        path : "/search/:keyword",
+        name : "search",
+        component : () => import("@/views/search/index.vue"),
+        children : [
+            {
+                path : "/search/:keyword/space/:spaceId",
+                name : "searchSpace",
+                component : () => import("@/components/spaceDetail.vue")
+            }
+        ]
     }
 ]
 
@@ -87,5 +110,6 @@ export const router = createRouter({
 export async function setupRouter(app : App)
 {
     app.use(router);
+    await usePermission(router);
     await router.isReady();
 }

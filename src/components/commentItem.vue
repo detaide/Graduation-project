@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-row">
-        <img class="w-8 h-8 rounded-full bg-gray-400" :src="props.commentInfo.avatarURL"/>
+        <img class="w-8 h-8 rounded-full bg-gray-400 cursor-pointer" :src="props.commentInfo.avatarURL" @click="userInfoStore.jump2UserHome(props.commentInfo.userId)"/>
         <div class="px-4">
             <div class="text-gray-400">{{ props.commentInfo.nickname }}</div>
             <div class="text-gray-600">{{ props.commentInfo.comment }}</div>
@@ -35,6 +35,7 @@
     import { onMounted, ref } from 'vue';
     import { CommentInfoType } from '@/typings';
     import { addThumbsAPI } from '@/api/space';
+import { useUserInfoStore } from '@/store/modules/userInfo';
 
     const props = defineProps<{
         commentInfo: CommentInfoType
@@ -42,6 +43,7 @@
 
     const isCheckThumb = ref(false);
     const thumbsNumber = ref(0);
+    const userInfoStore = useUserInfoStore();
 
     onMounted(() =>
     {

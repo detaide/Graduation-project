@@ -1,7 +1,7 @@
 <template >
     <div class="flex items-center justify-center">
-        <input type="text" class="input-focus-border px-2 py-2 rounded input-border text-xs w-52" placeholder="搜索"/>
-        <button class="bg-blue w-8 h-8 rounded flex items-center justify-center ml-1">
+        <input type="text" class="input-focus-border px-2 py-2 rounded input-border text-xs w-52" placeholder="搜索" v-model="searchValue"/>
+        <button class="bg-blue w-8 h-8 rounded flex items-center justify-center ml-1" @click="searchHandle">
             <Icon size="20" color="white">
                 <Search/>
             </Icon>
@@ -11,6 +11,20 @@
 <script setup lang="ts">
     import {Search} from "@vicons/ionicons5";
     import {Icon} from "@vicons/utils";
+    import {ref} from "vue";
+
+    interface Emit
+    {
+        (ev : "search" , keywords : string) : void
+    }
+    const emit = defineEmits<Emit>();
+    const searchValue = ref<string>("");
+
+    const searchHandle = () =>
+    {
+        emit("search", searchValue.value);
+    }
+
 </script>
     
 <style lang="less" scoped>

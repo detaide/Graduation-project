@@ -48,7 +48,7 @@
     </div>
 </template>
 <script setup lang="ts">
-    import { ref, reactive } from "vue";
+    import { ref, reactive, onMounted } from "vue";
     import { NCheckbox } from "naive-ui";
     import * as LoginModel from "@/utils/general/loginModel";
     import Vcode from "vue3-puzzle-vcode";
@@ -145,8 +145,9 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
         let encryptedPassword = Crypto.encrypted(loginObj.password);
 
         loginRet = await userInfoStore.login({...loginObj, password : encryptedPassword});
+        console.log(loginRet);
         userInfoStore.writeCookie(loginRet?.cookie);
-        userInfoStore.setUserInfo(loginRet);
+        await userInfoStore.setUserInfo(loginRet);
         
         eventBus.emit("Login", true);
         message.success("登录成功");
@@ -180,8 +181,17 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
         (type === "username") && emailInputRef.value?.classList.remove("input-error");
     }
 
+    onMounted(() =>
+    {
+    })
+
+
 </script>
     
 <style lang="less">
     @import url("@/styles/global.less");
+    .n-model-mask{
+        z-index: -1000 !important;
+    }
+
 </style>

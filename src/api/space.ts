@@ -6,7 +6,7 @@ import { get, post } from "@/utils/request";
 export async function publishSpaceAPI(spaceInfo : SpaceInfo)
 {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
     return await post({
         url : "/space/publish?" + userQuery,
         data : spaceInfo
@@ -27,6 +27,12 @@ export async function bringAppSpaceByUserIdAPI<T>(userId? : number) : Promise<T>
     }) as T
 }
 
+export async function bringSpaceByFollow<T>(userId : number) : Promise<T> {
+    return await get({
+        url : "/space/space_by_follow?user_id=" + userId
+    }) as T
+}
+
 export async function bringSpaceDetailAPI<T>(id : number) : Promise<T>
 {
     return await get({
@@ -37,7 +43,7 @@ export async function bringSpaceDetailAPI<T>(id : number) : Promise<T>
 export async function publishSpaceCommentAPI(comment : string, spaceId : number)
 {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
     console.log(userQuery);
     return await post({
         url : "/space/publish_comment?" + userQuery,
@@ -65,7 +71,7 @@ export async function bringSpaceByUserIdAPI(userId:number) {
 export async function addThumbsAPI(spaceId : number)
 {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
     return await post({
         url : "/space/add_thumbs?space_id=" + userQuery,
         data : {
@@ -79,6 +85,40 @@ export async function getSpaceType() {
         url : "/space/space_type"
     })
 }
+
+export async function searchSpaceAPI(keywords : string) {
+    return get({
+        url : "/space/search_space?keyword=" + keywords
+    })
+}
+
+export async function getSpaceGeneral(spaceId : number, userId : number)
+{
+    if(!spaceId || !userId)
+    {
+        window.message.error("参数错误");
+        return;
+    }
+    return get({
+        url : "/space/space_general?space_id=" + spaceId + (userId ? "&user_id=" + userId : "")
+    })
+}
+
+export async function spaceFollowAPI(spaceId : number, userId : Number, type : "Star" | "Like", followStatus : "Add" | "Cancel") {
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+    return post({
+        url : "/space/space_follow?" + userQuery,
+        data : {
+            spaceId,
+            userId,
+            type,
+            followStatus
+        }
+    })
+}
+
+
 export interface SpaceInfo
 {
     title : string,

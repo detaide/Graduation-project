@@ -8,25 +8,31 @@
                     <div class="flex flex-row gap-4">
                         <div class="text-xl font-bold text-gray-600">{{ channelData.name }}</div>
                         <div class="text-sm w-16 py-1 bg-red-500 text-center text-white rounded-full font-bold cursor-pointer active:scale-95 transform">
-                            <span v-show="!data.followStatus" @click="followHandle">关注</span>
-                            <span v-show="data.followStatus">已关注</span>
+                            <span v-show="!selfChannel && !channelData.userFollow" @click="followHandle(1)">关注</span>
+                            <span v-show="!selfChannel && channelData.userFollow" @click="followHandle(2)">已关注</span>
+                            <span v-show="selfChannel">吧主</span>
                         </div>
                         <div class="flex flex-row text-xs gap-x-4 text-gray-400 leading-loose">
                             <div> 关注 : <span class="text-red-400">{{ channelData.follow || 0 }}</span> </div>
                             <div> 帖数 :  <span class="text-red-400">{{ channelData.itemNumber || 0 }}</span></div>
                         </div>
                     </div>
+                    <div class="flex flex-row gap-x-2 items-center text-gray-400 text-base">频主 :
+                        <img :src="general.headImg(channelData.avatarURL!)" class="w-4 h-4 rounded-full"/>
+                        <div class=""> {{ channelData.nickname }}</div>
+                    </div>
                    <div class="text-gray-400 text-base flex flex-row gap-x-20">
                         <div class="text-sm">简介 : {{ channelData.memo }}</div>
                         <div>类型 : {{ channelData.typeName }}</div>
+                        
                    </div>
                 </div>
             </div>
 
         </div>
 
-        <ChannelPageComment v-if="channelData.id!" :channelId="channelData.id!" class="bg-white w-full "/>
-        <ReplyEditor class="w-full h-52 rounded-b-lg"/>
+        <ChannelPageComment v-if="channelData.id!" :channelId="channelData.id!" class="bg-white w-full mt-4"/>
+        <!-- <ReplyEditor class="w-full h-52 rounded-b-lg"/> -->
         
         <div class="fixed bottom-32 right-16 text-4xl text-white w-12 h-12 bg-blue-500 text-center rounded-full cursor-pointer" @click="createChannelItemHandle()">+</div>
         <div class="fixed bottom-12 right-16 text-2xl  w-12 h-12  text-center rounded-full border  flex items-center justify-center shadow-sm cursor-pointer" @click="BackToTop">
@@ -51,6 +57,7 @@
     import {ArrowUp} from "@vicons/ionicons5";
     import { NModal } from "naive-ui";
     import ChannelCreate from "./channelCreate.vue";
+import { useUserInfoStore } from "@/store/modules/userInfo";
 
     interface ChannelData
     {
@@ -65,12 +72,15 @@
         type : number,
         typeName : string,
         follow : number,
-        itemNumber : number
+        itemNumber : number,
+        userFollow : boolean
     }
 
     const route = useRoute();
     const channelData = ref<Partial<ChannelData>>({});
     const showNewChannel = ref(false);
+    const selfChannel = ref(false);
+    const userInfoStore = useUserInfoStore();
 
     const data = {
         channelName : "黑神话悟空",
@@ -90,6 +100,7 @@
         channelData.value = channelInfo ;
         console.log("channelInfo", channelInfo)
         await addChannelScanNumberAPI(+(channelInfo?.id!) as number);
+        selfChannel.value = channelInfo.ownerId == userInfoStore.id;
     })
 
     const createChannelItemHandle = () =>
@@ -102,10 +113,16 @@
         document.querySelector(".top")?.scrollIntoView({behavior : "smooth"});
     }
 
-    const followHandle = async () =>
+    /**
+     * 
+     * @param type 1 : follow 2 : unfollow
+     */
+    const followHandle = async (type : number) =>
     {
-        let ret =  await followChannel(channelData.value.id!);
-        console.log(ret);
+        console.log("follow", type);
+        let ret =  await followChannel(channelData.value.id!, type);
+        window.message.success(ret);
+        channelData.value.userFollow = type == 1;
     }
     
 

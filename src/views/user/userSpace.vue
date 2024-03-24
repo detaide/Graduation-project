@@ -31,7 +31,30 @@ import { bringAppSpaceByUserIdAPI, bringSpaceByUserIdAPI, getAllSpaceInfoAPI } f
     
     const openSpaceHandler = (spaceId? : number) =>
     {
-        router.push("/user/userSpace/" + spaceId);
+        router.push({name : "userSpaceDetail", params : {spaceId : spaceId}});
+    }
+
+    const spaceDataFormatter = async (spaceInfo  : Array<SpaceInfo>) =>
+    {
+        let newList : Array<SpaceInfo> = [];
+        const regex = /!\[alt text\]\((http:\/\/[^)]+)\)/g;
+        const singleRegex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
+
+        spaceInfo.forEach((item) => {
+            let info = item.info;
+            let matchInfo = info.match(regex) || [];
+            if(matchInfo)
+            {
+                let headImg = matchInfo[0]?.match(singleRegex);
+                newList.push({
+                    ...item,
+                    headImage : headImg![1],
+                    outerInfo : info.replace(regex, ""),
+                })
+            }
+        })
+
+        return newList;
     }
 
     onMounted(async () =>
@@ -39,20 +62,7 @@ import { bringAppSpaceByUserIdAPI, bringSpaceByUserIdAPI, getAllSpaceInfoAPI } f
         let userId = +(route.params.userId as string);
         const regex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
         let spaceTotalRet = await bringAppSpaceByUserIdAPI<Array<SpaceInfo>>(userId);
-        let newList : Array<SpaceInfo> = [];
-        spaceTotalRet.forEach((item) => {
-            let info = item.info;
-            let matchInfo = info.match(regex);
-            if(matchInfo)
-            {
-                newList.push({
-                    ...item,
-                    headImage : matchInfo[1],
-                    outerInfo : info.replace(regex, ""),
-                })
-            }
-        })
-        allSpace.value = newList;
+        allSpace.value = await spaceDataFormatter(spaceTotalRet);
     })
 </script>
 <style lang="less" scoped>

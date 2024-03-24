@@ -10,7 +10,7 @@ export async function getChannelTypeAPI() {
 
 export async function createChannelAPI(channelInfo : Partial<ChannelInfo>) {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
     return await post({
         url : "/channel/create_channel?" + userQuery,
         data : channelInfo
@@ -19,22 +19,30 @@ export async function createChannelAPI(channelInfo : Partial<ChannelInfo>) {
 
 export async function bringChannelFollowAPI() {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
+
+    if(!userQuery)
+    {
+        return [];
+    }
     return await get({
         url : "/channel/channel_follow_by_user_id?" + userQuery
     });
 }
 
 export async function bringChannelDetailByNameAPI(channelName: string) {
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+
     return await get({
-        url : "/channel/bring_channel_detail_by_name?channel_name=" + channelName
+        url : "/channel/bring_channel_detail_by_name?channel_name=" + channelName + (userQuery ? "&" + userQuery : "")
     });
     
 }
 
 export async function createChannelItemAPI(channelItem : Partial<ChannelItemInfo>) {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
     return post({
         url : "/channel/create_channel_item?" + userQuery,
         data : channelItem
@@ -42,10 +50,10 @@ export async function createChannelItemAPI(channelItem : Partial<ChannelItemInfo
 }
 
 
-export async function bringChannelItemListAPI(channelId : number) {
+export async function bringChannelItemListAPI(channelId : number, keywords? : string) {
     return await get(
         {
-            url : "/channel/bring_channel_item_info?channel_id=" + channelId
+            url : "/channel/bring_channel_item_info?channel_id=" + channelId + (keywords ? "&keywords=" + keywords : "")
         }
     )
 }
@@ -58,7 +66,7 @@ export async function bringChannelItemDetailAPI(channelItemId : number) {
 
 export async function createChannelCommentAPI(comment : string, channelItemId : number) {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
     return await post({
         url : "/channel/create_channel_item_comment?" + userQuery,
         data : {
@@ -76,7 +84,7 @@ export async function addChannelScanNumberAPI(channelId : number) {
 
 export async function bringChannelItemByUserIdAPI() {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
     return await get({
         url : "/channel/bring_channel_item_by_user_id?" + userQuery
     })
@@ -95,14 +103,21 @@ export async function bringAllChannelAPI() {
 }
 
 
-export async function followChannel(channelId : number) {
+export async function followChannel(channelId : number, type? : number) {
     const userInfo = useUserInfoStore();
-    let userQuery = userInfo.userQuery();
+    let userQuery = await userInfo.userQuery();
     return await post({
         url : "/channel/follow_channel?" + userQuery,
         data : {
-            channelId
+            channelId,
+            type
         }
+    })
+}
+
+export async function searchChannelAPI(keywords : string) {
+    return await get({
+        url : "/channel/search_channel?keyword=" + keywords
     })
 }
 

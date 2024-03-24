@@ -40,7 +40,6 @@ export function http<T = any>(
 ){
     // 成功请求
     const successHandler = (res : AxiosResponse<Response<T>>) => {
-        console.log(res);
         //对返回数据状态码进行校验, 1001 服务端自定义错误代码
         if((res.status === 200 || res.status === 201) && res.data.status !== 1001){
             return res.data

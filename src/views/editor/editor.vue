@@ -41,6 +41,7 @@
     const {message} = createDiscreteApi(["message"]);
     const title = ref("Hello");
     const spaceType = ref();
+    const userInfoStore = useUserInfoStore();
 
     // const getVditorValue = computed(() =>
     // {
@@ -85,6 +86,12 @@
         // let markdown =  await vditor.value.md2html!(getVditorValue.value)
         
         if(!VerifyPublish()) return;
+        // if()
+        let userLogin = await userInfoStore.isLoginAndOpenModal();
+        if(!userLogin) 
+        {
+            return;
+        } 
 
         try{
             let res = await publishSpaceAPI({

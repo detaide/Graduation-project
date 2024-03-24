@@ -120,10 +120,11 @@
                                     <label for="school" class="block text-sm font-medium leading-6 text-gray-900">校区</label>
                                     <div class="mt-2">
                                         <select id="school" name="school" autocomplete="school-name" v-model="userMessage.school" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                        <option value="new_west">紫霄校区西区</option>
+                                        <!-- <option value="new_west">紫霄校区西区</option>
                                         <option value="new_center">紫霄校区中区</option>
                                         <option value="old">学园校区</option>
-                                        <option value="old-north">北区</option>
+                                        <option value="old-north">北区</option> -->
+                                        <option v-for="(item, index) in Object.keys(SchoolLocation.schoolLocation)" :key="index" :value="item">{{ SchoolLocation.getSchoolLocation(item) }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -162,7 +163,8 @@ import { useUserInfoStore } from '@/store/modules/userInfo';
 import { UserMessage } from '@/typings';
 import { NDatePicker, useMessage } from 'naive-ui';
     import { onMounted, reactive, ref } from 'vue';
-
+    import * as chatManager from "@/utils/chat";
+    import {SchoolLocation} from "@/typings";
 
     const formRef = ref<HTMLFormElement>();
     const fileInputRef = ref<HTMLInputElement>();
@@ -199,8 +201,8 @@ import { NDatePicker, useMessage } from 'naive-ui';
             event.preventDefault();
             console.log(userMessage.value)
             await  userInfoStore.userMessageSubmitAPI(userMessage.value);
-            
-
+            let remoteStatus = await chatManager.syncUserInfo(userMessage.value);
+            remoteStatus && window.message.success("聊天信息更新成功");
         })
 
         fileInputRef.value?.addEventListener("change", () =>

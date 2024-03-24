@@ -1,3 +1,6 @@
+
+
+
 export function triggerLogin()
 {
     const loginModel = document.querySelector(".loginModel");

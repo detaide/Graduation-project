@@ -1,13 +1,15 @@
 import { defineStore } from "pinia";
 import { getCookie, getLocalStorage, setCookie, setLocalStorage, UserInfoType } from "./userInfo";
 import api from "@/api";
-import { loginAPI, registerAPI, userMessageSubmitAPI } from "@/api/userInfo";
+import { checkCookieStatusAPI, loginAPI, registerAPI, userMessageSubmitAPI } from "@/api/userInfo";
 import { eventBus } from "@/utils/eventBus";
 import { createDiscreteApi } from "naive-ui";
 import { openLoginModel } from "@/utils/general/loginModel";
 import { UserMessage } from "@/typings";
 import * as general from "@/utils/general";
 import { router } from "@/router";
+import { TUIKitLogin } from "@/TUIKit";
+import * as ChatManager from "@/utils/chat";
 
 const {message} = createDiscreteApi(["message"]);
 
@@ -32,7 +34,7 @@ export const useUserInfoStore = defineStore("userInfo-store", {
 
             return setCookie(cookie);
         },
-        setUserInfo(userInfo : Partial<UserInfoType>)
+        async setUserInfo(userInfo : Partial<UserInfoType>)
         {
             this.id = userInfo.id;
             this.username = userInfo.username;
@@ -41,29 +43,58 @@ export const useUserInfoStore = defineStore("userInfo-store", {
                 userInfo.userDetail!.avatarURL = general.headImg(userInfo?.userDetail?.avatarURL || '');
                 this.userDetail = userInfo.userDetail;
             }
+            await TUIKitLogin(userInfo.id!?.toString());
+            console.log("setUserInfoSuccess")
             setLocalStorage(this.$state);
         },
-        isLogin()
+        async isLogin()
         {
-            return !!getCookie();
+            let loginStatus = false;
+            try{
+                loginStatus = await this.checkCookie() as unknown as boolean;
+            }catch(err)
+            {
+                loginStatus = false;
+            }
+            return !!loginStatus;
         },
-        logout()
+        async isLoginAndOpenModal()
+        {
+            let loginStatus = await this.checkCookie();
+            window.message.error("请先登录");
+            !loginStatus && general.openLoginModel();
+            return !!loginStatus;
+        },
+        async clearLogin()
+        {
+            this.id = void 0;
+            this.userDetail = {};
+            this.username = void 0;
+
+        },
+        async logout()
         {
             eventBus.emit("logout");
-            message.success("logout success");
+            await this.clearLogin();
+            setLocalStorage(this.$state);
+            await ChatManager.chatLogout();
+            message.success("logout success"); 
             return setCookie("", -1);
         },
         reLogin()
         {
             eventBus.emit("logout");
+            
             return setCookie("", -1);
             
         },
-        userQuery()
+        async userQuery()
         {
-            if(!this.isLogin() || !this.id)
+            let loginStatus = await this.isLogin()
+            if(!loginStatus || !this.id)
             {
-                this.logout();
+                // await this.logout();
+                return false;
             }
 
             return `user_id=${this.id}`;
@@ -90,6 +121,18 @@ export const useUserInfoStore = defineStore("userInfo-store", {
             if(isSelf)
                 userId = this.id;
             router.push({path : "/user" + (userId ? "/" + userId : "")})
+        },
+        async checkCookie()
+        {
+            const cookie = getCookie();
+            if(!cookie || !this.id!)
+                return false;
+            
+            let cookieStatus = await checkCookieStatusAPI(this.id!);
+            
+            return cookieStatus;
+
+
         }
     }
 })

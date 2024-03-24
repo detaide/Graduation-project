@@ -8,12 +8,14 @@
             "
         >
             <div class="flex flex-row items-center gap-x-2 cursor-pointer">
-                <img :src="userInfo.avatarURL" class="w-10 h-10 rounded-full bg-gray-400" @click="userInfoStore.jump2UserHome(userInfo.userId)"/>
-                <div class="text-gray-600 text-base">{{ userInfo.nickname }}</div>
+                <img :src="general.headImg(props.spaceInfo.avatarURL!)" class="w-10 h-10 rounded-full bg-gray-400" @click="userInfoStore.jump2UserHome(props.spaceInfo.userId)"/>
+                <div class="text-gray-600 text-base">{{ props.spaceInfo.nickname }}</div>
             </div>
-            <div class="w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
-                <div class="text-white font-bold" v-show="!isFollow" @click="followHandle">关注</div>
-                <div class="text-white font-bold" v-show="isFollow" @click="unFollowHandle">已关注</div>
+            <div v-show="!self && !isFollow" @click="followHandle" class="text-white font-bold w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
+                关注
+            </div>
+            <div v-show="!self && isFollow" @click="unFollowHandle" class="text-white font-bold w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
+                已关注             
             </div>
         </div>
 
@@ -48,23 +50,25 @@
             </div>
             
             <div class="flex flex-row justify-between items-center w-1/2 gap-2 pr-2">
-                <div class="flex items-center gap-1 cursor-pointer">
+                <div class="flex items-center gap-1 cursor-pointer" @click="followSpace">
                     <Icon :size="20">
-                        <HeartOutline/>
+                        <HeartOutline  v-show="!selfGeneral.followNumber"/>
+                        <Heart class="text-red-500" v-show="selfGeneral.followNumber"/>
                     </Icon>
-                    <div>100+</div>
+                    <div>{{ spaceGeneral.followNumber }}</div>
                 </div>
-                <div class="flex items-center gap-1 cursor-pointer">
-                    <Icon :size="20">
-                        <StarOutline/>
+                <div class="flex items-center gap-1 cursor-pointer" @click="starSpace">
+                    <Icon :size="20" >
+                        <Star :class="'text-red-500'" v-show="selfGeneral.starNumber"/>
+                        <StarOutline v-show="!selfGeneral.starNumber"/>
                     </Icon>
-                    <div>200+</div>
+                    <div>{{ spaceGeneral.starNumber }}</div>
                 </div>
                 <div class="flex items-center gap-1 cursor-pointer">
                     <Icon :size="20">
                         <ChatboxEllipsesOutline/>
                     </Icon>
-                    <div>300</div>
+                    <div>{{ spaceGeneral.commentNumber }}</div>
                 </div>
             </div>
         </div>
@@ -104,16 +108,17 @@
 </template>
 <script setup lang="ts">
     import { Icon } from '@vicons/utils';
-    import { HeartOutline, StarOutline, ChatboxEllipsesOutline } from '@vicons/ionicons5';
+    import { HeartOutline, StarOutline, ChatboxEllipsesOutline, Star, Heart } from '@vicons/ionicons5';
     import SpaceComment from "./spaceComment.vue";
     import Vditor from "vditor";
-    import {computed, onMounted, ref} from "vue";
+    import {computed, onMounted, ref, reactive} from "vue";
     import { CommentInfoType, SpaceInfo, UserMessage } from '@/typings';
     import * as general from "@/utils/general";
     import { followUserAPI, followUserCancelAPI, getUserDetail, getUserFollowStatusAPI } from '@/api/userInfo';
     import { bringSpaceCommentBySpaceId, publishSpaceCommentAPI } from '@/api/space';
     import { useUserInfoStore } from '@/store/modules/userInfo';
 import { followChannel } from '@/api/channel';
+import {getSpaceGeneral, spaceFollowAPI} from "@/api/space";
 
     interface Props
     {
@@ -128,13 +133,19 @@ import { followChannel } from '@/api/channel';
     const textHTML = ref('');
     const isFollow = ref(false);
     const props = defineProps<Props>();
-    const userInfo = ref<Partial<UserMessage>>({});
+    // const userInfo = ref<Partial<UserMessage>>({});
     const defaultHeadImg = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80";
     const commentModelShow = ref(false);
     const comment = ref('');
     const userInfoStore = useUserInfoStore();
     const spaceComment = ref<{addCommenthandle : (arg : Partial<CommentInfoType>) => any}>();
-    
+    const self = ref(false);
+    const spaceGeneral = reactive({
+        commentNumber : 0,
+        followNumber : 0,
+        starNumber : 0
+    });
+    const selfGeneral = ref<Partial<typeof spaceGeneral>>({})
     
 
     const text = `
@@ -152,6 +163,7 @@ It was moments like these that made life worth living, and I was grateful for th
     const defaultText = `内容为空....`;
 
 
+
     const md2html = async (text : string) =>
     {
         return await Vditor.md2html(text, {cdn : "/cdn", mode : "light"});
@@ -159,12 +171,20 @@ It was moments like these that made life worth living, and I was grateful for th
 
     onMounted(async () =>
     {
+        self.value = userInfoStore.getUserDetail().userId === props.spaceInfo?.userId;
         let followStatus = await getUserFollowStatusAPI(props.spaceInfo?.userId!);
         isFollow.value = followStatus as unknown as boolean;
         textHTML.value = await md2html(props?.spaceInfo?.info || defaultText);
-        let userDetailRet = await getUserDetail(props.spaceInfo?.userId! || 0) as Partial<UserMessage>;
-        userDetailRet.avatarURL = headImg(userDetailRet?.avatarURL);
-        userInfo.value = userDetailRet;
+
+        spaceGeneral.commentNumber = +(props.spaceInfo.spaceComment || 0);
+        spaceGeneral.starNumber = +(props.spaceInfo.spaceStar || 0);
+        spaceGeneral.followNumber = +(props.spaceInfo.spaceLike || 0);
+        let userGeneralRet = await getSpaceGeneral(props.spaceInfo.id!, userInfoStore.id!) as unknown as {star : number, like : number};
+        selfGeneral.value = {
+            followNumber : userGeneralRet?.like || 0,
+            starNumber : userGeneralRet?.star || 0
+        };
+        console.log(typeof spaceGeneral.starNumber)
     })
 
     const commentModelHandle = () =>
@@ -176,24 +196,39 @@ It was moments like these that made life worth living, and I was grateful for th
     {
         let commentInfo = await publishSpaceCommentAPI(comment.value, props.spaceInfo.id!);
         commentModelShow.value = false;
-        spaceComment.value?.addCommenthandle(commentInfo);
+        let commentNumber = spaceComment.value?.addCommenthandle(commentInfo);
+        spaceGeneral.commentNumber = commentNumber;
         window.message.success("回复成功");
     }
 
     const followHandle = async () =>
     {
-        let ret = await followUserAPI(userInfo.value.userId!);
+        let ret = await followUserAPI(props.spaceInfo.userId!);
         window.message.success(ret);
         isFollow.value = true;
     }
 
     const unFollowHandle = async () =>
     {
-        let ret = await followUserCancelAPI(userInfo.value.userId!)
+        let ret = await followUserCancelAPI(props.spaceInfo.userId!)
         window.message.success(ret);
         isFollow.value = false;
     }
 
+    const starSpace = async () =>
+    {
+        await spaceFollowAPI(props.spaceInfo.id!, props.spaceInfo.userId!, "Star", !!selfGeneral.value.starNumber ? "Cancel" : "Add");
+        selfGeneral.value.starNumber = !!selfGeneral.value.starNumber ? 0 : 1;
+        spaceGeneral.starNumber += 1 * (selfGeneral.value.starNumber ? 1 : -1);
+        
+    }
+
+    const followSpace = async () =>
+    {
+        await spaceFollowAPI(props.spaceInfo.id!, props.spaceInfo.userId!, "Like", !!selfGeneral.value.followNumber ? "Cancel" : "Add");
+        selfGeneral.value.followNumber = !!selfGeneral.value.followNumber ? 0 : 1;
+        spaceGeneral.followNumber += 1 * (selfGeneral.value.followNumber ? 1 : -1);
+    }
 
 </script>
     

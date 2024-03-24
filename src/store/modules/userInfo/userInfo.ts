@@ -2,6 +2,7 @@ import { LoginObj, UserMessage } from "@/typings";
 import { ss } from "@/utils/storage";
 import { userInfo } from "os";
 import { Ref, ref } from "vue";
+import Cookies from "js-cookie";
 
 const LOCAL_NAME = "UserInfo";
 const COOKIE_NAME = "token";
@@ -38,13 +39,20 @@ export function getLocalStorage() : Partial<UserInfoType>
 //     document.cookie =   COOKIE_NAME + '=' +  cookie;
 // }
 
-export function setCookie(cookie : string, expire : number = 1000 * 60 * 60 * 4)
+// export function setCookie(cookie : string, expire : number = 1000 * 60 * 60 * 4)
+// {
+//     document.cookie =   COOKIE_NAME + '=' +  cookie + "; expires=" + new Date(Date.now() + expire).toUTCString();
+// }
+
+export function setCookie(cookie : string, expire : number = 100 * 60 * 60 * 4)
 {
-    document.cookie =   COOKIE_NAME + '=' +  cookie + "; expires=" + new Date(Date.now() + expire).toUTCString();
+    Cookies.set(COOKIE_NAME, cookie, {expires : expire});
 }
 
 export function getCookie()
 {
-    return document.cookie;
+    // return document.cookie;
+    let cookie = Cookies.get();
+    return cookie ? cookie[COOKIE_NAME] : '';
 }
 

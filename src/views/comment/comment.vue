@@ -27,7 +27,6 @@
             </div>
             <wc-waterfall :gap="14" :cols="3" class="px-6 py-6 w-full ">
                 <WaterBox v-for="(item, index) in allSpace" :key="index" 
-                    :height="heightList[Math.floor(Math.random() * heightList.length)]"
                     :spaceDetail="item"
                     class="py-2"
                     @open-space="openSpaceHandler"
@@ -64,6 +63,7 @@
     {
         let spaceTotalRet = await getAllSpaceInfoAPI<Array<SpaceInfo>>();
         allSpace.value = await spaceDataFormatter(spaceTotalRet);
+        console.log(allSpace.value)
 
         const spaceTypeList = await getSpaceType() as unknown as {[key : string] : string};
         for(let key in spaceTypeList)
@@ -78,17 +78,19 @@
     const spaceDataFormatter = async (spaceInfo  : Array<SpaceInfo>) =>
     {
         let newList : Array<SpaceInfo> = [];
-        const regex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
-        
+        const regex = /!\[alt text\]\((http:\/\/[^)]+)\)/g;
+        const singleRegex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
 
         spaceInfo.forEach((item) => {
             let info = item.info;
-            let matchInfo = info.match(regex);
+            console.log(info)
+            let matchInfo = info.match(regex) || [];
             if(matchInfo)
             {
+                let headImg = matchInfo[0]?.match(singleRegex);
                 newList.push({
                     ...item,
-                    headImage : matchInfo[1],
+                    headImage : headImg![1],
                     outerInfo : info.replace(regex, ""),
                 })
             }

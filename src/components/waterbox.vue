@@ -33,7 +33,7 @@
         This component comes with some `rtl` classes. Please remove them if they are not needed in your project.
         -->
 
-        <article class="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm" v-if="props.spaceDetail">
+        <article class="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm cursor-pointer" v-if="props.spaceDetail">
             <img
                 alt=""
                 :src="props?.spaceDetail?.headImage || 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'"
@@ -48,16 +48,20 @@
                 </a>
 
                 <p class="mt-2 line-clamp-3 text-sm/relaxed text-gray-500">
-                {{ props.spaceDetail.outerInfo || 'Info' }}
+                    <div v-html="outerInfo"></div>
                 </p>
 
-                <a href="#" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600">
-                Find out more
-
-                <span aria-hidden="true" class="block transition-all group-hover:ms-0.5 rtl:rotate-180">
-                    &rarr;
-                </span>
-                </a>
+                <div class="text-gray-400 text-sm mt-2 flex flex-col gap-y-1">
+                    <div class="flex flex-row items-center gap-x-2">
+                        <img :src="general.headImg(props.spaceDetail.avatarURL)" class="h-4 w-4 bg-gray-400 rounded-full"/>
+                        <div >{{ props.spaceDetail.nickname }}</div>
+                    </div>
+                    <div class="flex flex-row justify-between gap-x-2 flex-wrap">
+                        <div>发布时间 : {{ general.timeFormatter(props.spaceDetail.publishTime) }}</div>
+                        <div>类型 : {{ props.spaceDetail.typeName || "未知" }}</div>
+                    </div>
+                </div>
+                
             </div>
         </article>
     </div>
@@ -65,9 +69,11 @@
 
 <script setup lang="ts">
     import { SpaceInfo } from "@/typings";
-import {HeartOutline} from "@vicons/ionicons5";
+    import {HeartOutline} from "@vicons/ionicons5";
     import { Icon } from "@vicons/utils";
-import { onMounted } from "vue";
+    import { onMounted, ref } from "vue";
+    import * as general from "@/utils/general";
+import Vditor from "vditor";
 
     interface Props {
         spaceDetail : SpaceInfo
@@ -77,18 +83,30 @@ import { onMounted } from "vue";
     }
 
     const props = defineProps<Props>();
-
+    const outerInfo = ref<string>("");
     const emit = defineEmits<Emit>();
+
+    const md2html = async (text : string) =>
+    {
+        return await Vditor.md2html(text, {cdn : "/cdn", mode : "light"});
+    }
 
     const openSpace = () =>
     {
         emit("openSpace", props.spaceDetail.id);
     }
 
-    onMounted(() =>
+    onMounted(async () =>
     {
-
+        outerInfo.value = await md2html(textOverflow(props.spaceDetail.outerInfo!) || 'no text');
     })
+
+    const textOverflow = (text  :string) =>
+    {
+        if(!text)   return "";
+        let length = 160;
+        return text.length > length ? text.slice(0, length) + '...' : text;
+    }
 
 </script>
     

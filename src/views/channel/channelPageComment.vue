@@ -5,7 +5,7 @@
                 <div class="w-4 h-4 bg-red-400 rounded-full"></div>
                 <div>帖子列表</div>
             </div>
-            <ChannelSearch/>
+            <ChannelSearch @search="searchHandle"/>
         </div>
         <div class="gap-line"></div>
         <div class="px-2 flex flex-col gap-8">
@@ -28,13 +28,18 @@ import { ItemType } from "@/typings";
     }>();
 
     const itemDataList = ref<Array<ItemType>>([]);
-    
+
     onMounted(async () =>
     {
         let ret = await bringChannelItemListAPI(props.channelId || 0);
         itemDataList.value = ret as unknown as typeof itemDataList.value;
-        console.log(ret);
     })
+
+    const searchHandle = async (keyword? : string) =>
+    {
+        let ret = await bringChannelItemListAPI(props.channelId || 0, keyword);
+        itemDataList.value = ret as unknown as typeof itemDataList.value;
+    }
 
 </script>
 <style lang="less" scoped>
