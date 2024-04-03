@@ -19,7 +19,7 @@
 
                 <!-- </div> -->
                 <div class="h-full w-1/2 bg-white px-2 py-4" v-if="Object.keys(spaceInfo).length">
-                    <SpaceInfo :spaceInfo="spaceInfo"/>
+                    <SpaceInfo :spaceInfo="spaceInfo" @deletSpace="deleteSpaceHandle"/>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
     import { bringSpaceDetailAPI } from "@/api/space";
     import { SpaceDetail } from "@/typings";
     import {SpaceInfo as SpaceInfoType} from "@/typings";
-
+    import { eventBus } from "@/utils/eventBus";
 
     const maskInner = ref(null);
     const defaultHeadImg = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80";
@@ -42,6 +42,13 @@
     const headImg = ref(defaultHeadImg);
     const spaceInfo = ref<Partial<SpaceInfoType>>({})
 
+    const deleteSpaceHandle = (spaceId? : number) =>
+    {
+        // maskHandler()
+        eventBus.emit("deleteSpace", spaceId);
+        router.back();
+    }
+        
     const maskHandler = (dom : any) =>
     {
         if(!dom.contains(maskInner.value))

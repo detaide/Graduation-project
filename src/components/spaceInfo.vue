@@ -11,11 +11,14 @@
                 <img :src="general.headImg(props.spaceInfo.avatarURL!)" class="w-10 h-10 rounded-full bg-gray-400" @click="userInfoStore.jump2UserHome(props.spaceInfo.userId)"/>
                 <div class="text-gray-600 text-base">{{ props.spaceInfo.nickname }}</div>
             </div>
-            <div v-show="!self && !isFollow" @click="followHandle" class="text-white font-bold w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
+            <div v-show="!self && !isFollow" v-permission="followHandle" class="text-white font-bold w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
                 关注
             </div>
-            <div v-show="!self && isFollow" @click="unFollowHandle" class="text-white font-bold w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
+            <div v-show="!self && isFollow" v-permission="unFollowHandle" class="text-white font-bold w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
                 已关注             
+            </div>
+            <div v-show="self" v-permission="deleteSpace" class="text-white font-bold w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
+                删除             
             </div>
         </div>
 
@@ -33,7 +36,7 @@
                 </div>
             </div>
             <div>
-                <Space-Comment :spaceId="props.spaceInfo.id" ref="spaceComment"/>
+                <Space-Comment :spaceId="+props.spaceInfo.id!" ref="spaceComment"/>
             </div>
         </div>
 
@@ -50,14 +53,14 @@
             </div>
             
             <div class="flex flex-row justify-between items-center w-1/2 gap-2 pr-2">
-                <div class="flex items-center gap-1 cursor-pointer" @click="followSpace">
+                <div class="flex items-center gap-1 cursor-pointer" v-permission="followSpace">
                     <Icon :size="20">
                         <HeartOutline  v-show="!selfGeneral.followNumber"/>
                         <Heart class="text-red-500" v-show="selfGeneral.followNumber"/>
                     </Icon>
                     <div>{{ spaceGeneral.followNumber }}</div>
                 </div>
-                <div class="flex items-center gap-1 cursor-pointer" @click="starSpace">
+                <div class="flex items-center gap-1 cursor-pointer" v-permission="starSpace">
                     <Icon :size="20" >
                         <Star :class="'text-red-500'" v-show="selfGeneral.starNumber"/>
                         <StarOutline v-show="!selfGeneral.starNumber"/>
@@ -90,7 +93,7 @@
                     class="inline-block w-full rounded-lg bg-black px-4 py-2 font-medium text-white sm:w-auto
                     transform active:scale-95 duration-100
                     "
-                    @click="publishSpaceComment"
+                    v-permission="publishSpaceComment"
                 >
                     回复
                 </button>
@@ -118,12 +121,18 @@
     import { bringSpaceCommentBySpaceId, publishSpaceCommentAPI } from '@/api/space';
     import { useUserInfoStore } from '@/store/modules/userInfo';
 import { followChannel } from '@/api/channel';
-import {getSpaceGeneral, spaceFollowAPI} from "@/api/space";
+import {getSpaceGeneral, spaceFollowAPI, deleteSpaceAPI} from "@/api/space";
 
     interface Props
     {
         spaceInfo : Partial<SpaceInfo>
     }
+
+    interface Emit{
+        (ev : "deletSpace", spaceId? : number ) : void
+    }
+
+    const emit = defineEmits<Emit>();
 
     const headImg = (imageName? : string) =>
     {
@@ -162,8 +171,6 @@ It was moments like these that made life worth living, and I was grateful for th
     
     const defaultText = `内容为空....`;
 
-
-
     const md2html = async (text : string) =>
     {
         return await Vditor.md2html(text, {cdn : "/cdn", mode : "light"});
@@ -171,7 +178,8 @@ It was moments like these that made life worth living, and I was grateful for th
 
     onMounted(async () =>
     {
-        self.value = userInfoStore.getUserDetail().userId === props.spaceInfo?.userId;
+        console.log(userInfoStore.getUserDetail().userId, props.spaceInfo?.userId)
+        self.value = userInfoStore.getUserDetail().userId == props.spaceInfo?.userId;
         let followStatus = await getUserFollowStatusAPI(props.spaceInfo?.userId!);
         isFollow.value = followStatus as unknown as boolean;
         textHTML.value = await md2html(props?.spaceInfo?.info || defaultText);
@@ -179,6 +187,17 @@ It was moments like these that made life worth living, and I was grateful for th
         spaceGeneral.commentNumber = +(props.spaceInfo.spaceComment || 0);
         spaceGeneral.starNumber = +(props.spaceInfo.spaceStar || 0);
         spaceGeneral.followNumber = +(props.spaceInfo.spaceLike || 0);
+        
+        if(!props.spaceInfo.id || !userInfoStore.id)
+        {
+            selfGeneral.value = {
+                followNumber : 0,
+                starNumber : 0
+            }
+            return;
+            
+        }
+        console.log(props.spaceInfo.id, userInfoStore.id)
         let userGeneralRet = await getSpaceGeneral(props.spaceInfo.id!, userInfoStore.id!) as unknown as {star : number, like : number};
         selfGeneral.value = {
             followNumber : userGeneralRet?.like || 0,
@@ -228,6 +247,13 @@ It was moments like these that made life worth living, and I was grateful for th
         await spaceFollowAPI(props.spaceInfo.id!, props.spaceInfo.userId!, "Like", !!selfGeneral.value.followNumber ? "Cancel" : "Add");
         selfGeneral.value.followNumber = !!selfGeneral.value.followNumber ? 0 : 1;
         spaceGeneral.followNumber += 1 * (selfGeneral.value.followNumber ? 1 : -1);
+    }
+
+    const deleteSpace = async () =>
+    {
+        // await deleteSpaceAPI(props.spaceInfo.id!);
+        window.message.success("删除成功");
+        emit("deletSpace", props.spaceInfo.id!);
     }
 
 </script>

@@ -27,7 +27,7 @@
                     type="textarea"
                     placeholder="输入内容"
                 />
-                <div @click="commentReply" class="px-4 py-2 bg-blue-400 w-24 text-center text-white text-base rounded-full mt-4 cursor-pointer active:scale-95 transform">回复</div>
+                <div v-permission="commentReply" class="px-4 py-2 bg-blue-400 w-24 text-center text-white text-base rounded-full mt-4 cursor-pointer active:scale-95 transform">回复</div>
             </div>
         </div>
     </div>

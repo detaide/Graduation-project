@@ -22,8 +22,8 @@
         </div>
         <div class="w-3/4  rounded px-4 py-4 ml-64 bg-white">
             <div class="h-8 flex flex-row items-center gap-x-4 text-center text-base text-gray-500 border-gray-300 border-b-2 ">
-                <div class="text-focus cursor-pointer h-full text-hover">推荐</div>
-                <div class="cursor-pointer h-full text-hover">最新</div>
+                <!-- <div class="text-focus cursor-pointer h-full text-hover">推荐</div> -->
+                <div class="cursor-pointer h-full text-hover text-focus">动态列表</div>
             </div>
             <wc-waterfall :gap="14" :cols="3" class="px-6 py-6 w-full ">
                 <WaterBox v-for="(item, index) in allSpace" :key="index" 
@@ -48,6 +48,17 @@
     interface Emit{
         (ev : "openSpace", spaceId? : number) : void
     }
+
+    eventBus.on("deleteSpace", (spaceId) =>
+    {
+        console.log(spaceId);
+        allSpace.value = allSpace.value.reduce((arr, item) =>
+        {
+            if(item.id != spaceId)
+                arr.push(item)
+            return arr;
+        }, [] as typeof allSpace.value)
+    })
 
     const navList = ref<Array<{[key : string] : string}>>([]);
     const allSpace = ref<Array<SpaceInfo>>([]);

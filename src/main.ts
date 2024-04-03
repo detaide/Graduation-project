@@ -10,6 +10,7 @@ import { TUIComponents, TUIChatKit, genTestUserSig, useTUIKit } from "./TUIKit";
 import { TUILogin } from "@tencentcloud/tui-core";
 import * as general from "@/utils/general";
 import { getWeatherAPI } from './utils/gaodeAPI';
+import {setupDirective} from "@/utils/directive"
 
 const SDKAppID = 1600028196; // Your SDKAppID
 const secretKey = "eb80e1a18137ab3055ff966c4cb89be5a8852f3ee5d0f9cc1a71796c79e2568f"; //Your secretKey
@@ -23,6 +24,8 @@ async function bootstrap() {
     useGlobalErrorHandle(app);
 
     await setupRouter(app);
+
+    await setupDirective(app);
 
     window.message = message;
 

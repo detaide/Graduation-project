@@ -21,6 +21,7 @@ import { onMounted, ref } from "vue";
 import { bringAppSpaceByUserIdAPI, bringSpaceByUserIdAPI, getAllSpaceInfoAPI } from "@/api/space";
     import { useUserInfoStore } from "@/store/modules/userInfo";
     import { SpaceInfo } from "@/typings";
+import { eventBus } from "@/utils/eventBus";
 
     const userSpace = [];
     const heightList = [32, 36, 40, 44,56, 52, 72, 80, 96];
@@ -33,6 +34,17 @@ import { bringAppSpaceByUserIdAPI, bringSpaceByUserIdAPI, getAllSpaceInfoAPI } f
     {
         router.push({name : "userSpaceDetail", params : {spaceId : spaceId}});
     }
+
+    eventBus.on("deleteSpace", (spaceId) =>
+    {
+        console.log(spaceId);
+        allSpace.value = allSpace.value.reduce((arr, item) =>
+        {
+            if(item.id != spaceId)
+                arr.push(item)
+            return arr;
+        }, [] as typeof allSpace.value)
+    })
 
     const spaceDataFormatter = async (spaceInfo  : Array<SpaceInfo>) =>
     {

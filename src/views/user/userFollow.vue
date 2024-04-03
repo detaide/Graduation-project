@@ -79,8 +79,9 @@
     {
         console.log("/user/" + id)
         if(id){
-            router.push({path : "/user/" + id});
-            window.location.reload();
+            // router.push({path : "/user/" + id});
+            window.open(window.location.origin + "/user/" + id, "_blank");
+            // window.location.reload();
         }
             
     }

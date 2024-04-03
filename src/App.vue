@@ -47,7 +47,6 @@
         <n-modal v-model:show="chatManager.chatModelShow.value">
             <chatWindow/>
         </n-modal> 
-        
     </div>
     
 </template>

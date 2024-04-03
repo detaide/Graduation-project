@@ -41,7 +41,7 @@
   
       <div class="mt-6 flex items-center justify-end gap-x-6">
         <!-- <button type="button" class="text-sm font-semibold leading-6 text-gray-900">取消</button> -->
-        <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">发布</button>
+        <button type="submit" v-permission="submitHandle" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">发布</button>
       </div>
     </form>
   </template>
@@ -66,6 +66,22 @@ import { onMounted, ref } from 'vue';
         imgFileList : [] as Array<string>
     })
 
+    const submitHandle = async () =>
+    {
+      console.log(channelItemInfo.value)
+      let imgList : Array<string> = [];
+      imgRegionRef.value?.childNodes.forEach((node) =>
+      {
+        imgList.push((node as unknown as HTMLImageElement).src);
+      })
+
+      channelItemInfo.value.imgFileList = imgList;
+      channelItemInfo.value.channelId = props.channelId!;
+
+      let ret = await createChannelItemAPI(channelItemInfo.value);
+      window.message.success("发布成功");
+    }
+
     onMounted(() =>
     {
         formRef.value?.addEventListener("submit", async (event) =>
@@ -73,19 +89,6 @@ import { onMounted, ref } from 'vue';
             
             // verifySubmit();
             event.preventDefault();
-            console.log(channelItemInfo.value)
-            let imgList : Array<string> = [];
-            imgRegionRef.value?.childNodes.forEach((node) =>
-            {
-              imgList.push((node as unknown as HTMLImageElement).src);
-            })
-
-            channelItemInfo.value.imgFileList = imgList;
-            channelItemInfo.value.channelId = props.channelId!;
-
-            let ret = await createChannelItemAPI(channelItemInfo.value);
-            window.message.success("发布成功");
-            return;
 
         })
 

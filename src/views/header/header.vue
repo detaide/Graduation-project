@@ -77,8 +77,15 @@
         avatarToolShow.value = !avatarToolShow.value;
     }
 
-    const jump2Home = () =>
+    const jump2Home = async () =>
     {
+        let loginStatus = await userInfoStore.isLogin();
+        if(!loginStatus)
+        {
+            window.message.error("请先登录");
+            return;
+        }
+
         userInfoStore.jump2UserHome(0, true);
         avatarToolShow.value = false;
         activeShow.value = "selfHome";

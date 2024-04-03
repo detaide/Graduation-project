@@ -118,6 +118,17 @@ export async function spaceFollowAPI(spaceId : number, userId : Number, type : "
     })
 }
 
+export async function deleteSpaceAPI(spaceId : number)
+{
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+    return post({
+        url : '/space/delete_space?' + userQuery,
+        data : {
+            spaceId : spaceId
+        }
+    })
+}
 
 export interface SpaceInfo
 {
