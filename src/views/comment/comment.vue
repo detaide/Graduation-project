@@ -2,7 +2,7 @@
     <div class=" py-4 px-40 flex flex-row gap-x-10 h-full">
         <div class="fixed">
             <div class="w-52 bg-white h-5/6 rounded flex  flex-col color-deep-gray p-2">
-            <div class="py-4 cursor-pointer flex flex-row items-center gap-x-2 nav-hover w-full rounded pl-6" @click="navChangeHandle()">
+            <div class="py-4 cursor-pointer flex flex-row items-center gap-x-2 nav-hover w-full rounded pl-6" @click="navChangeHandle(10)">
                 <Icon size="20">
                     <HomeSharp/>
                 </Icon>
@@ -25,13 +25,14 @@
                 <!-- <div class="text-focus cursor-pointer h-full text-hover">推荐</div> -->
                 <div class="cursor-pointer h-full text-hover text-focus">动态列表</div>
             </div>
-            <wc-waterfall :gap="14" :cols="3" class="px-6 py-6 w-full ">
+            <wc-waterfall :gap="14" :cols="3" class="px-6 py-6 w-full " v-show="allSpace && allSpace?.length">
                 <WaterBox v-for="(item, index) in allSpace" :key="index" 
                     :spaceDetail="item"
                     class="py-2"
                     @open-space="openSpaceHandler"
                 />
             </wc-waterfall>
+            <div v-show="!allSpace || !allSpace?.length" class="w-full text-center py-12 text-lg text-gray-400">该模块尚未有人发布动态...</div>
         </div>
     </div>
 </template>
@@ -41,7 +42,7 @@
     import "wc-waterfall";
     import WaterBox from "@/components/waterbox.vue"
     import { onMounted, ref } from "vue";
-    import { getAllSpaceInfoAPI, getSpaceType } from "@/api/space";
+    import { getAllSpaceInfoAPI, getSpaceType, getTodaySpaceAPI } from "@/api/space";
     import { SpaceInfo } from "@/typings";
     import { eventBus } from "@/utils/eventBus";
 
@@ -77,6 +78,10 @@
         console.log(allSpace.value)
 
         const spaceTypeList = await getSpaceType() as unknown as {[key : string] : string};
+        // navList.value.push({
+        //     key : 'new',
+        //     value : '最新动态'
+        // })
         for(let key in spaceTypeList)
         {
             navList.value.push({
@@ -112,8 +117,18 @@
 
     const navChangeHandle = async (type? : number) =>
     {
+        let ret = [];
+
+        if(type == 10)
+        {
+            ret =  await getTodaySpaceAPI() as unknown as Array<SpaceInfo>;
+        }else{
+            ret =  await getAllSpaceInfoAPI(type) as unknown as Array<SpaceInfo>;
+        }
+
         // eventBus.emit("navChange", type);
-        let ret =  await getAllSpaceInfoAPI(type) as unknown as Array<SpaceInfo>;
+        // let ret =  await getTodaySpaceAPI() as unknown as Array<SpaceInfo>;
+
         allSpace.value = await spaceDataFormatter(ret);
     }
 </script>
@@ -139,6 +154,7 @@
         position: relative;
         color: @color-blue;
     }
+    
 
     
     

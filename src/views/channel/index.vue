@@ -62,7 +62,7 @@
     import { onMounted, ref } from "vue";
     import { NModal } from "naive-ui";
     import ChannelCreate from "./channelCreate.vue";
-    import { bringAllChannelAPI } from "@/api/channel";
+    import { bringAllChannelAPI, bringChannelHotAPI } from "@/api/channel";
     import { ChannelInfo } from "@/typings";
     import * as general from "@/utils/general";
 import { useRouter } from "vue-router";
@@ -81,7 +81,7 @@ import { useRouter } from "vue-router";
 
     onMounted(async () =>
     {
-        let ret = await bringAllChannelAPI();
+        let ret = await bringChannelHotAPI();
         hotData.value = ret as unknown as Partial<ChannelInfo>;
         console.log(hotData.value)
     })

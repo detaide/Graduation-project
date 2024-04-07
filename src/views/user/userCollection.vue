@@ -42,7 +42,13 @@ import { bringAppSpaceByUserIdAPI, bringSpaceByFollow, bringSpaceByUserIdAPI, ge
         const singleRegex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
 
         spaceInfo.forEach((item) => {
+            // console.log(item)
             let info = item.info;
+            if(!info)
+            {
+                item.title='已失效';
+                return;
+            }
             let matchInfo = info.match(regex) || [];
             if(matchInfo)
             {
@@ -62,6 +68,7 @@ import { bringAppSpaceByUserIdAPI, bringSpaceByFollow, bringSpaceByUserIdAPI, ge
     {
         let userId = +(route.params.userId as string);
         let spaceTotalRet = await bringSpaceByFollow<Array<SpaceInfo>>(userId);
+        console.log(spaceTotalRet)
         allSpace.value = await spaceDataFormatter(spaceTotalRet);
     })
 </script>

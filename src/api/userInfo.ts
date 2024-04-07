@@ -62,9 +62,9 @@ export async function getUserFollowStatusAPI(userId : number) {
     {
         return true;
     }
-
+    console.log('user',userId, userInfo.userDetail?.userId)
     return await get({
-        url : '/user/follow_status?follower_id=' + userId + '&followed_id=' + userInfo.id 
+        url : '/user/follow_status?follower_id=' + userInfo.userDetail?.userId  + '&followed_id=' + userId
     })
 }
 

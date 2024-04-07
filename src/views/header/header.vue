@@ -1,9 +1,10 @@
 <template>
     <div class="flex flex-row px-20 justify-between bg-white">
        <div class="flex ">
-            <div class="flex items-center justify-center bg-blue-pink min-w-200 rounded">
-                <div class=" text-4xl font-bold ">LOGO</div>
-            </div>
+            <!-- <div class="flex items-center justify-center bg-blue-pink min-w-200 rounded"> -->
+                <!-- <div class=" text-4xl font-bold ">LOGO</div> -->
+                <div class="logo"></div>
+            <!-- </div> -->
             <ul class="flex flex-row pl-6">
                 <li v-for="(item, index) in liItem" :key="index" :class="(item.key === activeShow) && 'nav-active-header'" class="flex justify-center text-sm items-center text-center px-2 py-0.5 hover-bottom-blue hover-blue"><a @click="jumpTo(item.key)" class="cursor-pointer">{{ item.title }}</a></li>
                 <li :class="('selfHome' === activeShow) && 'nav-active-header'" class="flex justify-center text-sm items-center text-center px-2 py-0.5 hover-bottom-blue hover-blue"><a @click="jumpTo('selfHome')" class="cursor-pointer">{{ "我的主页" }}</a></li>
@@ -154,5 +155,12 @@
     .nav-active-header{
         border-bottom: 2px solid @color-bottom-blue;
         color: @color-bottom-blue;
+    }
+    .logo{
+        background: url("@/assets/logo2.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        width: 160px;
+        height: 100px;
     }
 </style>

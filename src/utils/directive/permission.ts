@@ -5,7 +5,6 @@ const permission = {
     mounted : (el : HTMLElement, binding : any) =>
     {
         let originFunc = binding.value;
-        
         el.addEventListener("click",async (event) => {
             let userInfoStore = useUserInfoStore()
             

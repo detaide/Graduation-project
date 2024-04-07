@@ -80,12 +80,21 @@ export async function syncUserInfo(userInfo : Partial<UserMessage>)
         return;
     }
 
-    let {data} = await chat.updateMyProfile({
+    let syncObj : {
+        nick : any,
+        gender : any,
+        selfSignature : any,
+        allowType : any,
+        avatar? : any
+    } = {
         nick : userInfo.nickname,
         gender : userInfo.gender == 1 ? TUIChatEngine.TYPES.GENDER_MALE : TUIChatEngine.TYPES.GENDER_FEMALE,
         selfSignature : userInfo.description,
         allowType : TUIChatEngine.TYPES.ALLOW_TYPE_ALLOW_ANY
-    })
+    };
+
+    (import.meta.env.VITE_SERVICE_STATUS === 'false') && (syncObj.avatar = userInfo.avatarURL)
+    let {data} = await chat.updateMyProfile(syncObj)
     if(data)    return true;
     return false;
 }

@@ -9,7 +9,7 @@
       @click="closeChatPop"
     >
       <!-- 安全提示 -->
-      <div class="tui-chat-safe-tips">
+      <!-- <div class="tui-chat-safe-tips">
         <span>
           {{
             TUITranslateService.t(
@@ -20,7 +20,7 @@
         <a @click="openComplaintLink(Link.complaint)">
           {{ TUITranslateService.t("TUIChat.点此投诉") }}
         </a>
-      </div>
+      </div> -->
       <div
         v-if="isGroup && groupApplicationCount > 0"
         class="tui-chat-application-tips"

@@ -8,8 +8,8 @@
                     <div class="flex flex-row gap-4">
                         <div class="text-xl font-bold text-gray-600">{{ channelData.name }}</div>
                         <div class="text-sm w-16 py-1 bg-red-500 text-center text-white rounded-full font-bold cursor-pointer active:scale-95 transform">
-                            <span v-show="!selfChannel && !channelData.userFollow" v-permission="followHandle(1)">关注</span>
-                            <span v-show="!selfChannel && channelData.userFollow" v-permission="followHandle(2)">已关注</span>
+                            <span v-show="!selfChannel && !channelData.userFollow" v-permission="() => followHandle(1)">关注</span>
+                            <span v-show="!selfChannel && channelData.userFollow" v-permission="() => followHandle(2)">已关注</span>
                             <span v-show="selfChannel">吧主</span>
                         </div>
                         <div class="flex flex-row text-xs gap-x-4 text-gray-400 leading-loose">

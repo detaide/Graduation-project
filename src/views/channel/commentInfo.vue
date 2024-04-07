@@ -8,15 +8,16 @@
             </div>
             <div class="gap-line"></div>
 
-            <div class="px-4">
+            <div class="px-4 flex flex-row items-center justify-between">
                 <div class="text-xl ">标题： {{ channelCommentData?.title }}</div>
+                <div v-show="isSelf" v-permission="deleteComment" class="text-sm w-16 py-1 bg-red-500 text-center text-white rounded-full font-bold cursor-pointer active:scale-95 transform">删除</div>
             </div>
 
             <div class="gap-line"></div>
 
             <div class="px-4" v-if="channelCommentData">
                 <CommentBox class="border-b border-gray-400" :commentData="channelCommentData" :floor="1"/>
-                <CommentBox class="border-b border-gray-400" v-for="(item, index) in channelCommentData.subCommentItemData" :key="index" :subCommentData="item as ChannelCommentSubItem" :floor="+(index + 2)"/>
+                <CommentBox class="border-b border-gray-400" @deleteItem="deleteItem" v-for="(item, index) in channelCommentData.subCommentItemData" :key="item.id" :subCommentData="item as ChannelCommentSubItem" :floor="+(index + 2)"/>
 
             </div>
 
@@ -36,10 +37,11 @@
     import { NInput } from 'naive-ui';
     import CommentBox from './commentBox.vue';
 import { onMounted, ref } from 'vue';
-import { bringChannelItemDetailAPI, createChannelCommentAPI } from '@/api/channel';
+import { bringChannelItemDetailAPI, createChannelCommentAPI, deleteChannelItemAPI } from '@/api/channel';
 import { useRoute, useRouter } from 'vue-router';
 import * as general from "@/utils/general";
 import { ChannelCommentData, ChannelCommentSubItem } from '@/typings';
+import { useUserInfoStore } from '@/store/modules/userInfo';
 
     const channelCommentData = ref<ChannelCommentData>();
     
@@ -56,6 +58,8 @@ import { ChannelCommentData, ChannelCommentSubItem } from '@/typings';
 
     const route = useRoute();
     const router = useRouter();
+    const isSelf = ref(false);
+    const userInfoStore = useUserInfoStore();
     onMounted(async () =>
     {
         let commentId = parseInt(route.params.commentId as string);
@@ -67,7 +71,8 @@ import { ChannelCommentData, ChannelCommentSubItem } from '@/typings';
         let ret = await bringChannelItemDetailAPI(commentId)  as unknown as ChannelCommentData;
         ret.isMainComment = true;
         channelCommentData.value = ret;
-        console.log(ret)
+        isSelf.value = userInfoStore.id == ret.ownerId;
+        console.log(isSelf, userInfoStore.id, ret.ownerId)
     })
 
     const commentReply = async () =>
@@ -86,6 +91,27 @@ import { ChannelCommentData, ChannelCommentSubItem } from '@/typings';
         }
 
         router.push({path : "/channelPage/" + channelTitle})
+    }
+
+    const deleteComment = async () =>
+    {
+        let commentId = parseInt(route.params.commentId as string);
+        await deleteChannelItemAPI(commentId);
+        window.message.success("删除成功");
+        router.push("/channel")
+    }
+
+    const deleteItem = (itemId : number) =>
+    {
+        // console.log(channelCommentData.value?.subCommentItemData, itemId)
+        channelCommentData.value?.subCommentItemData?.forEach((item, index) =>
+        {
+            if(itemId == item.id)
+            {
+                // console.log(channelCommentData.value?.subCommentItemData, index);
+                channelCommentData.value?.subCommentItemData?.splice(index, 1);
+            }
+        })
     }
 
 </script>

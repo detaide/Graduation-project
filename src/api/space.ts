@@ -130,6 +130,35 @@ export async function deleteSpaceAPI(spaceId : number)
     })
 }
 
+export async function deleteSpaceCommentAPI(spaceCommentId : number)
+{
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+    console.log(spaceCommentId)
+    return post({
+        url : "/space/delete_comment?" + userQuery,
+        data : {
+            commentId : spaceCommentId
+        }
+    })
+
+}
+
+export async function getTodaySpaceAPI()
+{
+    return get({
+        url : "/space/today_space"
+    })
+
+}
+
+export async function addSpaceScanNumberAPI(spaceId : number)
+{
+    return get({
+        url : "/space/add_scan_number?space_id=" + spaceId,
+    })
+}
+
 export interface SpaceInfo
 {
     title : string,

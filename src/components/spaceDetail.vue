@@ -30,7 +30,7 @@
     import { onMounted, ref } from "vue";
     import SpaceInfo from "./spaceInfo.vue";
     import { useRouter, useRoute } from "vue-router";
-    import { bringSpaceDetailAPI } from "@/api/space";
+    import { bringSpaceDetailAPI, addSpaceScanNumberAPI } from "@/api/space";
     import { SpaceDetail } from "@/typings";
     import {SpaceInfo as SpaceInfoType} from "@/typings";
     import { eventBus } from "@/utils/eventBus";
@@ -61,7 +61,7 @@
         console.log( route.params.spaceId);
         let spaceDetailRet = await bringSpaceDetailAPI<SpaceDetail>(+(route.params.spaceId as string));
         let spaceDetailArticle = spaceDetailRet.article;
-        
+        await addSpaceScanNumberAPI(+(route.params.spaceId as string));
         let regex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
         headImg.value = spaceDetailArticle.info?.match(regex)?.[1] || defaultHeadImg;
         spaceInfo.value = spaceDetailArticle;

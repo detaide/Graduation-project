@@ -34,7 +34,7 @@
     <div>
         <div class="top invisible"></div>
         <div class="fixed w-full h-1/10 bg-white z-40"><Header class="w-full h-full"/></div>
-        <RouterView class="pt-24"/>
+        <RouterView class="pt-24  bg-school"/>
         <div class="fixed w-full h-full left-0 top-0 z-50 loginModel display-hide">
             <Login/>
         </div>
@@ -64,5 +64,14 @@
     .n-modal-mask
     {
         z-index: -9999 !important;
+    }
+    .bg-school{
+        /* background: url('@/assets/img/ptu_library_logo.png'); */
+            /* linear-gradient(to bottom, red, red); */
+        /* background-size: cover, cover;
+        background-repeat: no-repeat;
+        background-position: center, center;
+        background-color: rgba(255, 255, 255, 0.5); */
+        /* mask: linear-gradient(110deg, #000 10%, transparent 70%, transparent); */
     }
 </style>

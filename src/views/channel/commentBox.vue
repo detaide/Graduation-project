@@ -19,6 +19,7 @@
             <div class="right-8 text-gray-400 pt-2 absolute bottom-2.5 flex flex-row gap-x-2">
                 <div>{{ props?.floor }}楼</div>
                 <div>发布时间 ： {{ general.timeFormatter(commentData?.publishTime) }}</div>
+                <div v-if="(props.floor !== 1) && (commentData?.isMainComment || (commentData.userId === commentData.ownerId) || (commentData.userId === commentData.commentOwnerId))" class="underline cursor-pointer" v-permission="deleteCommentItem">删除</div>
             </div>
         </div>
     </div>
@@ -27,6 +28,11 @@
 import { ChannelCommentData, ChannelCommentSubItem } from '@/typings';
 import { onMounted, ref } from 'vue';
 import * as general from "@/utils/general";
+import { deleteChannelCommentAPI } from '@/api/channel';
+
+    interface Emit{
+        (ev : "deleteItem" , commentItemId : number) : void
+    }
 
     const commentData = ref<Partial<ChannelCommentData>>({});
     const imgList = ref<Array<string>>([]);
@@ -35,7 +41,11 @@ import * as general from "@/utils/general";
         commentData? : ChannelCommentData,
         subCommentData? : ChannelCommentSubItem,
         floor? : number
-    }>()
+    }>();
+
+    
+
+    const emit = defineEmits<Emit>();
 
     onMounted(() =>
     {
@@ -47,6 +57,14 @@ import * as general from "@/utils/general";
         }
         commentData.value = props.commentData! || props.subCommentData;
     })
+
+    const deleteCommentItem = async () =>
+    {
+        let commentItemId = commentData.value.id!;
+        await deleteChannelCommentAPI(commentItemId);
+        window.message.success("删除成功");
+        emit("deleteItem", commentItemId);
+    }
     
 </script>
 <style lang="less" scoped>

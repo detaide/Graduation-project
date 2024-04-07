@@ -32,7 +32,7 @@ import {onMounted, ref} from "vue";
     
 <style lang="less">
     .sun{
-        // background: url("@/assets//img//sun.jpg");
+        background: url("@/assets//img//sun.jpg");
         background-position: 50%;
         background-repeat: no-repeat;
         background-size: cover;

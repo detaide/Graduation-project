@@ -121,6 +121,34 @@ export async function searchChannelAPI(keywords : string) {
     })
 }
 
+export async function bringChannelHotAPI() {
+    return await get({
+        url : "/channel/channel_hot"
+    })
+}
+
+export async function deleteChannelItemAPI(channelItemId : number) {
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+    return await post({
+        url : "/channel/delete_channel_item?" + userQuery,
+        data : {
+            channelItemId
+        }
+    })
+}
+
+export async function deleteChannelCommentAPI(channelCommentId : number) {
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+    return await post({
+        url : "/channel/delete_channel_item_comment?" + userQuery,
+        data : {
+            channelCommentId
+        }
+    })
+}
+
 export interface ChannelInfo
 {
     name : string,

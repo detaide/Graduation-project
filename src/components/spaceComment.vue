@@ -2,8 +2,9 @@
     <div class="px-4 py-4">
         <div class="text-gray-400">总计 {{ commentInfoRef.length }} 条</div>
         <div class="py-4">
-            <Comment-Item v-for="(item, index) in commentInfoRef" :key="index"
+            <Comment-Item v-for="(item, index) in commentInfoRef" :key="item.id"
                 :commentInfo="item"
+                @deleteItem="deleteItem"
             />
         </div>
     </div>
@@ -40,6 +41,16 @@ import { CommentInfoType } from "@/typings";
         contetnInfo.publishTime = general.timeFormatter(contetnInfo.publishTime as number, true);
         contetnInfo && commentInfoRef.value.unshift(contetnInfo)
         return commentInfoRef.value.length;
+    }
+
+    const deleteItem = (itemId : number) =>
+    {
+        commentInfoRef.value?.forEach((item, index) =>
+        {
+            if(item.id == itemId)
+                commentInfoRef.value.splice(index, 1);
+        
+        })
     }
 
     defineExpose({

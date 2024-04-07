@@ -5,8 +5,8 @@
             <div class="text-gray-400">{{ props.commentInfo.nickname }}</div>
             <div class="text-gray-600">{{ props.commentInfo.comment }}</div>
             <div class="text-gray-400 text-xs pt-2">{{ props.commentInfo.publishTime }}</div>
-            <div class="flex flex-row gap-2 px-2 py-2 text-xs text-gray-400" @click="addThumbHandle">
-                <div class="flex items-center gap-1 cursor-pointer ">
+            <div class="flex flex-row gap-2 px-2 py-2 text-xs text-gray-400" >
+                <div class="flex items-center gap-1 cursor-pointer " @click="addThumbHandle">
                     <Icon :size="12" v-if="!isCheckThumb">
                         <HeartOutline/>
                     </Icon>
@@ -15,6 +15,7 @@
                     </Icon>
                     <div>{{ thumbsNumber }}</div>
                 </div>
+                <div v-show="isSelf" class="underline cursor-pointer" v-permission="deleteSpaceComment">删除</div>
                 <!-- <div class="flex items-center gap-1 cursor-pointer">
                     <Icon :size="12">
                         <ChatboxEllipsesOutline/>
@@ -34,20 +35,28 @@
     import CommentSubItem from './commentSubItem.vue';
     import { onMounted, ref } from 'vue';
     import { CommentInfoType } from '@/typings';
-    import { addThumbsAPI } from '@/api/space';
+    import { addThumbsAPI, deleteSpaceCommentAPI } from '@/api/space';
 import { useUserInfoStore } from '@/store/modules/userInfo';
 
     const props = defineProps<{
         commentInfo: CommentInfoType
     }>();
 
+    interface Emit{
+        (ev : "deleteItem" , commentItemId : number) : void
+    }
+
+    const emit = defineEmits<Emit>();
+
     const isCheckThumb = ref(false);
     const thumbsNumber = ref(0);
     const userInfoStore = useUserInfoStore();
+    const isSelf = ref(false);
 
     onMounted(() =>
     {
         thumbsNumber.value = props.commentInfo.thumbs;
+        isSelf.value = props.commentInfo.userId == userInfoStore.id;
     })
 
     const addThumbHandle = async () =>
@@ -62,6 +71,14 @@ import { useUserInfoStore } from '@/store/modules/userInfo';
         isCheckThumb.value = true;
         thumbsNumber.value += 1;
         window.message.success("点赞成功");
+    }
+
+    const deleteSpaceComment = async () =>
+    {
+        let commentId = props.commentInfo.id;
+        await deleteSpaceCommentAPI(commentId);
+        emit("deleteItem", commentId);
+        window.message.success("删除成功");
     }
 
 

@@ -19,7 +19,8 @@ export interface UserMessage
     email : string,
     avatarURL : string,
     id : number,
-    userId : number
+    userId : number,
+    avatar? : string
 }
 
 export interface SpaceInfo
@@ -116,7 +117,7 @@ export interface ChannelCommentData
     isMainComment : boolean,
     channelImg : string,
     commentOwnerId : number,
-    subCommentItemData? : ChannelCommentSubItem
+    subCommentItemData? : Array<ChannelCommentSubItem>
 }
 
 
