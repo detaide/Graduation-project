@@ -26,7 +26,7 @@
                 <div class="cursor-pointer h-full text-hover text-focus">动态列表</div>
             </div>
             <wc-waterfall :gap="14" :cols="3" class="px-6 py-6 w-full " v-show="allSpace && allSpace?.length">
-                <WaterBox v-for="(item, index) in allSpace" :key="index" 
+                <WaterBox v-for="(item, index) in allSpace" :key="item.id" 
                     :spaceDetail="item"
                     class="py-2"
                     @open-space="openSpaceHandler"
@@ -45,6 +45,7 @@
     import { getAllSpaceInfoAPI, getSpaceType, getTodaySpaceAPI } from "@/api/space";
     import { SpaceInfo } from "@/typings";
     import { eventBus } from "@/utils/eventBus";
+    import * as general from "@/utils/general";
 
     interface Emit{
         (ev : "openSpace", spaceId? : number) : void
@@ -75,7 +76,7 @@
     {
         let spaceTotalRet = await getAllSpaceInfoAPI<Array<SpaceInfo>>();
         allSpace.value = await spaceDataFormatter(spaceTotalRet);
-        console.log(allSpace.value)
+        console.log("allspacesss : ", allSpace.value)
 
         const spaceTypeList = await getSpaceType() as unknown as {[key : string] : string};
         // navList.value.push({
@@ -99,14 +100,20 @@
 
         spaceInfo.forEach((item) => {
             let info = item.info;
-            console.log(info)
             let matchInfo = info.match(regex) || [];
-            if(matchInfo)
+            // console.log("matchInfo",matchInfo)
+            if(matchInfo && matchInfo.length)
             {
                 let headImg = matchInfo[0]?.match(singleRegex);
                 newList.push({
                     ...item,
                     headImage : headImg![1],
+                    outerInfo : info.replace(regex, ""),
+                })
+            }else{
+                newList.push({
+                    ...item,
+                    headImage : general.headImg(''),
                     outerInfo : info.replace(regex, ""),
                 })
             }

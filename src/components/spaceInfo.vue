@@ -143,7 +143,7 @@ import {getSpaceGeneral, spaceFollowAPI, deleteSpaceAPI} from "@/api/space";
     const isFollow = ref(false);
     const props = defineProps<Props>();
     // const userInfo = ref<Partial<UserMessage>>({});
-    const defaultHeadImg = "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80";
+    const defaultHeadImg = "https://oss.ptu.edu.cn/fileApi/my-bucket/12fcf65315994eaabc2b1d683a06ead3.png";
     const commentModelShow = ref(false);
     const comment = ref('');
     const userInfoStore = useUserInfoStore();
@@ -251,7 +251,7 @@ It was moments like these that made life worth living, and I was grateful for th
 
     const deleteSpace = async () =>
     {
-        // await deleteSpaceAPI(props.spaceInfo.id!);
+        await deleteSpaceAPI(props.spaceInfo.id!);
         window.message.success("删除成功");
         emit("deletSpace", props.spaceInfo.id!);
     }
