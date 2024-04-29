@@ -9,8 +9,18 @@
     import { TUIChatKit } from "./TUIKit";
     import * as general from "@/utils/general";
     import * as chatManager from "@/utils/chat";
+    import LargeImage from "@/components/largeImg.vue";
+    import { eventBus } from "@/utils/eventBus";
 
     const chatModelShow = ref(false);
+    const LargeImgShow = ref(false);
+    const largeImgSrc = ref("https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel3.jpeg");
+
+    eventBus.on("largeImgTrigger", (src : string) =>
+    {
+        LargeImgShow.value = true;
+        largeImgSrc.value = src;
+    })
 
     const chatHandle = () =>
     {
@@ -47,6 +57,11 @@
         <n-modal v-model:show="chatManager.chatModelShow.value">
             <chatWindow/>
         </n-modal> 
+
+        <n-modal v-model:show="LargeImgShow">
+            <LargeImage :largeImgSrc="largeImgSrc"/>
+        </n-modal> 
+        
     </div>
     
 </template>

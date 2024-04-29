@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { getCookie, getLocalStorage, setCookie, setLocalStorage, UserInfoType } from "./userInfo";
 import api from "@/api";
-import { checkCookieStatusAPI, loginAPI, registerAPI, userMessageSubmitAPI } from "@/api/userInfo";
+import { checkCookieStatusAPI, loginAPI, registerAPI, userMessageSubmitAPI, emailLoginApi  } from "@/api/userInfo";
 import { eventBus } from "@/utils/eventBus";
 import { createDiscreteApi } from "naive-ui";
 import { openLoginModel } from "@/utils/general/loginModel";
@@ -21,6 +21,10 @@ export const useUserInfoStore = defineStore("userInfo-store", {
         async login<T extends Partial<UserInfoType>>(loginInfo : T)
         {
             return await loginAPI<T>(loginInfo)
+        },
+        async emailLogin(email : string, code : number)
+        {
+            return await emailLoginApi(email, code);
         },
 
         async register<T extends Partial<UserInfoType>>(registerInfo : T)
@@ -116,11 +120,16 @@ export const useUserInfoStore = defineStore("userInfo-store", {
             setLocalStorage(this.$state);
             eventBus.emit("userDetailChange");
         },
-        async jump2UserHome(userId? : number, isSelf? : boolean)
+        async jump2UserHome(userId? : number, isSelf? : boolean, isNoBlank? : boolean)
         {
             if(isSelf)
                 userId = this.id;
-            router.push({path : "/user" + (userId ? "/" + userId : "")})
+            if(isNoBlank)
+            {
+                router.push({path : "/user" + (userId ? "/" + userId : "")})
+                return;
+            }
+            window.open(window.location.origin + "/user/" + userId, "_blank");
         },
         async checkCookie()
         {

@@ -13,8 +13,20 @@
                 "
                 ref="maskInner"
             >
-                <div class="w-1/2 flex items-center">
-                    <img class="space-background-img bg-img  w-full" :src="headImg"/>
+                <div class="w-1/2 flex items-center bg-gray-300">
+                    <!-- <img class="space-background-img bg-img  w-full" :src="headImg"/> -->
+                    <n-carousel
+                        direction="horizontal"
+                        dot-placement="bottom"
+                        show-arrow
+                        centered-slides
+                        draggable
+                    >
+                        <n-carousel-item v-for="(item, index) in headImg" :key="index">
+                            <img class="space-background-img bg-img  w-full"  :src="item" v-large-img/>
+                        </n-carousel-item>
+                    
+                    </n-carousel>
                 </div>
 
                 <!-- </div> -->
@@ -34,12 +46,13 @@
     import { SpaceDetail } from "@/typings";
     import {SpaceInfo as SpaceInfoType} from "@/typings";
     import { eventBus } from "@/utils/eventBus";
+    import {NCarousel, NCarouselItem} from "naive-ui"
 
     const maskInner = ref(null);
     const defaultHeadImg = "https://oss.ptu.edu.cn/fileApi/my-bucket/12fcf65315994eaabc2b1d683a06ead3.png";
     const router = useRouter();
     const route = useRoute();
-    const headImg = ref(defaultHeadImg);
+    const headImg = ref<Array<string>>([defaultHeadImg]);
     const spaceInfo = ref<Partial<SpaceInfoType>>({})
 
     const deleteSpaceHandle = (spaceId? : number) =>
@@ -62,8 +75,22 @@
         let spaceDetailRet = await bringSpaceDetailAPI<SpaceDetail>(+(route.params.spaceId as string));
         let spaceDetailArticle = spaceDetailRet.article;
         await addSpaceScanNumberAPI(+(route.params.spaceId as string));
-        let regex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
-        headImg.value = spaceDetailArticle.info?.match(regex)?.[1] || defaultHeadImg;
+        let regex = /!\[alt text\]\((http:\/\/[^)]+)\)/g;
+        const urlMatch = spaceDetailArticle.info?.match(regex);
+
+        if(urlMatch)
+        {
+            headImg.value = [];
+        }
+
+        urlMatch?.forEach((item) =>
+        {
+            let subRegex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
+            let matchImg = item.match(subRegex)?.[1];
+            matchImg && (headImg.value.push(matchImg))
+        })
+
+        // headImg.value = (urlMatch || [])[1] || defaultHeadImg;
         spaceInfo.value = spaceDetailArticle;
     })
 
@@ -86,5 +113,15 @@
     // }
     .max-vh{
         max-height: 100vh;
+    }
+
+    .n-carousel__slide{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .n-carousel__arrow{
+        color: black !important;
     }
 </style>

@@ -2,7 +2,7 @@
     <div class="w-3/5 my-auto mx-auto">
         <div class="bg-white mt-4 relative">
             <div class="w-full h-40 bg-img"></div>
-            <img class="absolute left-10 top-24 w-32 h-32 z-30 bg-gray-400 border-8 border-white" :src="channelData.imgURL"/>
+            <img class="absolute left-10 top-24 w-32 h-32 z-30 bg-gray-400 border-8 border-white" :src="channelData.imgURL" v-large-img/>
             <div class="bg-channel-color h-24 relative pt-2 ">
                 <div class="absolute left-48 flex flex-col gap-y-2">
                     <div class="flex flex-row gap-4">

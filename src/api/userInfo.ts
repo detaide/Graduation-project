@@ -3,6 +3,21 @@ import { LoginObj, UserMessage } from "@/typings";
 import { get, post } from "@/utils/request";
 
 
+export async function requestEmailCodeApi(email : string)
+{
+    return get({
+        url : "/user/mail_code?email=" + email
+    })
+}
+
+export async function emailLoginApi(email : string, code : number)
+{
+
+    return get({
+        url : "/user/mail_login?email=" + email + "&code=" + code
+    })
+}
+
 export async function registerAPI<T extends Partial<LoginObj>>(loginInfo : T) {
     
     return post({

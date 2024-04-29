@@ -2,7 +2,7 @@
     <div class="ml-8 w-9/10 h-64 bg-white p-8 flex flex-row rounded-xl">
         <div class="w-4/5 border-r h-full border-gray-300 flex flex-row gap-12 justify-center">
             <div class="flex flex-col items-center gap-y-2">
-                <img :src="general.headImg(userInfo.avatarURL!)" class="w-32 h-32 rounded-full bg-gray-300"/>
+                <img :src="general.headImg(userInfo.avatarURL!)" class="w-32 h-32 rounded-full bg-gray-300" v-large-img/>
                 <div v-show="!homeSelf" @click="chatToUser" class="text-base w-32 py-1 bg-red-500 text-center text-white rounded-full font-bold cursor-pointer active:scale-95 transform flex items-center justify-center gap-x-2">
                     <Icon :size="20" color="white">
                         <ChatboxEllipsesSharp/>

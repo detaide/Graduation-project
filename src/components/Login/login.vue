@@ -17,7 +17,11 @@
                     </div>
 
                     <div class="w-full  flex flex-col gap-y-4 items-center" v-show="loginType === 'email'">
-                        <input type="text" class="login-input " placeholder="请输入邮箱" v-model="loginObj.username" ref="emailInputRef">
+                        <input type="text" class="login-input " placeholder="请输入邮箱" v-model="loginObj.email" ref="emailInputRef">
+                        <div class="flex flex-row w-4/5">
+                            <input type="text" class="login-input email-code" placeholder="验证码" v-model="loginObj.emailCode" ref="emailInputRef">
+                            <div @click="requestEmailCode" class="px-2 text-xs bg-blue-500 text-white text-center flex items-center ml-2 rounded-lg cursor-pointer active:scale-95 transform">获取验证码</div>
+                        </div>
                         <div class="text-blue-400 underline cursor-pointer" @click="changeLoginType('username')">账号密码登录</div>
                     </div>
 
@@ -29,6 +33,7 @@
                         <div 
                             class="px-4 py-2 border w-4/5 text-center rounded-lg bg-blue-500 text-white cursor-pointer active:scale-95 transform"
                             @click="varifyHandle('register')"
+                            v-show="loginType == 'username'"
                         >注册</div>
                     </div>
                     
@@ -57,12 +62,14 @@
     import * as Crypto from "@/utils/crypto";
     import { eventBus } from "@/utils/eventBus";
 import { UserInfoType } from "@/store/modules/userInfo/userInfo";
+import {requestEmailCodeApi} from "@/api/userInfo";
 
     interface LoginObj{
         username : string,
         password : string,
         checkItem : boolean,
-        email : string
+        email : string,
+        emailCode? : number
     }
 
     interface loginRetType extends UserInfoType
@@ -77,7 +84,7 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
         username : '',
         password : '',
         checkItem : true,
-        email : ''
+        email : '1317057252@qq.com',
     });
     const loginModelRef = ref(null);
     const emailInputRef = ref<HTMLInputElement>();
@@ -88,6 +95,7 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
     const userInfoStore = useUserInfoStore();
     const {message} = createDiscreteApi(["message"]);
     const verifyType = ref<"login" | "register">("login");
+    const requestCodeStatus = ref(false);
 
     const closeModelHandle = (dom : EventTarget | null) => {
         if(!dom)    return;
@@ -113,6 +121,12 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
                 emailInputRef.value?.classList.add("input-error");
                 return false;
             }
+
+            if(!loginObj.emailCode)
+            {
+                message.warning("验证码为空", {duration : 3000});
+                return false;
+            }
         }
 
         if(loginType.value === "username")
@@ -135,17 +149,27 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
             return;
         }
 
-        VerifyShow.value = true;
+        if(loginType.value == "username")
+        {
+            VerifyShow.value = true
+        }
+        else{
+            loginBtn();
+        }
         verifyType.value = type;
     }
 
     const loginBtn = async () =>
     {
         let loginRet : Partial<loginRetType> = {};
-        let encryptedPassword = Crypto.encrypted(loginObj.password);
-
-        loginRet = await userInfoStore.login({...loginObj, password : encryptedPassword});
-        console.log(loginRet);
+        if(loginType.value === ("email" as LoginType))
+        {
+            loginRet = await userInfoStore.emailLogin(loginObj.email, loginObj.emailCode!) as unknown as Partial<loginRetType>;
+        }else{
+            let encryptedPassword = Crypto.encrypted(loginObj.password);
+            loginRet = await userInfoStore.login({...loginObj, password : encryptedPassword});
+        }
+        
         userInfoStore.writeCookie(loginRet?.cookie);
         await userInfoStore.setUserInfo(loginRet);
         
@@ -153,6 +177,7 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
         message.success("登录成功");
         LoginModel.closeLoginModel();
     }
+
     const registerBtn = async () =>
     {
         let registerRet = null;
@@ -164,9 +189,18 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
         message.success(registerRet);
     }
 
-    const VerifySuccess = () =>
+    const VerifySuccess = async () =>
     {
         VerifyShow.value = false;
+        console.log(verifyType.value, requestCodeStatus.value)
+        if(loginType.value === 'email' && requestCodeStatus.value)
+        {
+            await requestEmailCodeApi(loginObj.email);
+            window.message.success("验证码已发送");
+            requestCodeStatus.value = false;
+            return;
+        }
+        
         verifyType.value === "login" ? loginBtn() : registerBtn();
     }
 
@@ -185,6 +219,18 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
     {
     })
 
+    const requestEmailCode = async () =>
+    {
+        if(!loginObj.email)
+        {
+            window.message.error("邮箱为空");
+            return;
+        }
+        requestCodeStatus.value = true;
+        VerifyShow.value = true;
+
+    }
+
 
 </script>
     
@@ -192,6 +238,10 @@ import { UserInfoType } from "@/store/modules/userInfo/userInfo";
     @import url("@/styles/global.less");
     .n-model-mask{
         z-index: -1000 !important;
+    }
+
+    .email-code{
+        width:70% !important;
     }
 
 </style>

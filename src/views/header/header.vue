@@ -31,7 +31,7 @@
     import * as LoginModel from "@/utils/general/loginModel";
     import {useRouter} from "vue-router";
     import { useUserInfoStore } from "@/store/modules/userInfo";
-    import { onMounted, watch, ref, computed } from "vue";
+    import { onMounted, watch, ref, computed, onUpdated } from "vue";
     import { eventBus } from "@/utils/eventBus";
 
     type ItemKeyType = "Home" | "channel" | "editor" | "selfHome";
@@ -65,6 +65,14 @@
     const loginStatus = ref(false);
     const avatarToolShow = ref(false);
     const activeShow = ref<ItemKeyType>("Home");
+    const navLocationMap = {
+        "channelPage" : "channel",
+        "channel" : "channel",
+        "commentInfo" : "channel",
+        "user" : "selfHome",
+        "home" : "Home",
+
+    }
 
     const avatar = computed(() =>
     {
@@ -87,7 +95,7 @@
             return;
         }
 
-        userInfoStore.jump2UserHome(0, true);
+        userInfoStore.jump2UserHome(0, true, true);
         avatarToolShow.value = false;
         activeShow.value = "selfHome";
     }
@@ -97,6 +105,8 @@
         userInfoStore.logout();
         avatarToolShow.value = false;
         router.push("/home");
+        activeShow.value = "Home";
+        console.log("activeShow", activeShow)
     }
 
     const loginHandleTrigger = () =>
@@ -118,7 +128,10 @@
     onMounted(async () =>
     {
         loginStatus.value = await userInfoStore.isLogin();
+        let mainRouter = window.location.pathname.split("/")[1];
+        activeShow.value = navLocationMap[mainRouter as keyof typeof navLocationMap] as ItemKeyType || "Home" ;
     })
+    
 
     eventBus.on("Login", async () =>
     {
