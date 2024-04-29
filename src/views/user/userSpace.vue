@@ -51,11 +51,11 @@ import { eventBus } from "@/utils/eventBus";
         let newList : Array<SpaceInfo> = [];
         const regex = /!\[alt text\]\((http:\/\/[^)]+)\)/g;
         const singleRegex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
-
         spaceInfo.forEach((item) => {
             let info = item.info;
             let matchInfo = info.match(regex) || [];
-            if(matchInfo)
+            
+            if(matchInfo && matchInfo.length > 0)
             {
                 let headImg = matchInfo[0]?.match(singleRegex);
                 newList.push({

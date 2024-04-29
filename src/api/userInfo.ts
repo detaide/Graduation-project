@@ -57,12 +57,20 @@ export async function followUserCancelAPI(followedId : number) {
 }
 
 export async function getUserFollowStatusAPI(userId : number) {
+
+    
     const userInfo = useUserInfoStore();
+
+    if(!userId || !userInfo.id)
+    {
+        return false;
+    }
+
     if(userId === userInfo.id)
     {
         return true;
     }
-    console.log('user',userId, userInfo.userDetail?.userId)
+    
     return await get({
         url : '/user/follow_status?follower_id=' + userInfo.userDetail?.userId  + '&followed_id=' + userId
     })

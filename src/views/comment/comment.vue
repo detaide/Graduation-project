@@ -12,7 +12,8 @@
             <ul class="text-center w-full">
                 <li v-for="(item,index ) in navList" :key="index" @click="navChangeHandle(+item.key as number)" class="p-4 cursor-pointer flex flex-row items-center  gap-x-2 nav-hover rounded pl-6">
                     <Icon size="20">
-                        <HomeSharp/>
+                        <!-- <HomeSharp/> -->
+                        <component :is="item.component"></component>
                     </Icon>
                     <div>{{ item.value }}</div>
                 </li>
@@ -38,7 +39,8 @@
 </template>
 <script setup lang="ts">
     import {Icon} from "@vicons/utils";
-    import {HomeSharp} from "@vicons/ionicons5";
+    import {HomeSharp, GameController} from "@vicons/ionicons5";
+    import {FiberNewOutlined, MoodSharp, MenuBookSharp, MovieCreationRound, MusicNoteFilled, HandshakeRound, ShoppingBagSharp} from '@vicons/material';
     import "wc-waterfall";
     import WaterBox from "@/components/waterbox.vue"
     import { onMounted, ref } from "vue";
@@ -66,6 +68,17 @@
     const allSpace = ref<Array<SpaceInfo>>([]);
     const heightList = [32, 36, 40, 44,56, 52, 72, 80, 96];
     const emit = defineEmits<Emit>();
+    const iconfontMap : {[key : string] : any} = {
+        100 : FiberNewOutlined,
+        101 : HomeSharp,
+        102 : MoodSharp,
+        103 : GameController,
+        104 : MenuBookSharp,
+        105 : MovieCreationRound,
+        106 : MusicNoteFilled,
+        107 : HandshakeRound,
+        108 : ShoppingBagSharp
+    }
 
     const openSpaceHandler = (spaceId? : number) =>
     {
@@ -76,7 +89,7 @@
     {
         let spaceTotalRet = await getAllSpaceInfoAPI<Array<SpaceInfo>>();
         allSpace.value = await spaceDataFormatter(spaceTotalRet);
-        console.log("allspacesss : ", allSpace.value)
+        // console.log("allspacesss : ", allSpace.value)
 
         const spaceTypeList = await getSpaceType() as unknown as {[key : string] : string};
         // navList.value.push({
@@ -87,7 +100,8 @@
         {
             navList.value.push({
                 key : key,
-                value : spaceTypeList[key]
+                value : spaceTypeList[key],
+                component : iconfontMap[key]
             })
         }
     })

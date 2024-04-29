@@ -47,7 +47,7 @@
             v-if="!commentModelShow"
         >
             <div class="bg-gray-200 w-32 h-10 rounded-full flex flex-row items-center px-2 cursor-pointer" @click="commentModelHandle" >
-                    <img class="w-6 h-6 rounded-full bg-gray-400" :src="userInfoStore.getUserDetail().avatarURL"/>
+                    <img class="w-6 h-6 rounded-full bg-gray-400" :src="userInfoStore.getUserDetail().avatarURL || `https://oss.ptu.edu.cn/fileApi/my-bucket/12fcf65315994eaabc2b1d683a06ead3.png`"/>
                     <div class="text-gray-400 text-xs pl-2">说些什么...</div>
                 
             </div>
@@ -82,7 +82,7 @@
             bg-white overflow-hidden py-2"
         >
             <textarea
-                class="w-full h-2/3 rounded-lg border-gray-500 p-3 text-sm outline outline-black "
+                class="w-full h-2/3 rounded-lg border-gray-500 p-3 text-sm outline outline-black commentAreaRef"
                 placeholder="Message"
                 rows="8"
                 id="message"
@@ -178,9 +178,9 @@ It was moments like these that made life worth living, and I was grateful for th
 
     onMounted(async () =>
     {
-        console.log(userInfoStore.getUserDetail().userId, props.spaceInfo?.userId)
         self.value = userInfoStore.getUserDetail().userId == props.spaceInfo?.userId;
         let followStatus = await getUserFollowStatusAPI(props.spaceInfo?.userId!);
+        console.log("followStatus", followStatus)
         isFollow.value = followStatus as unknown as boolean;
         textHTML.value = await md2html(props?.spaceInfo?.info || defaultText);
 
@@ -198,17 +198,17 @@ It was moments like these that made life worth living, and I was grateful for th
             
         }
         console.log(props.spaceInfo.id, userInfoStore.id)
-        let userGeneralRet = await getSpaceGeneral(props.spaceInfo.id!, userInfoStore.id!) as unknown as {star : number, like : number};
+        let userGeneralRet = await getSpaceGeneral(props.spaceInfo.id!, userInfoStore?.id) as unknown as {star : number, like : number};
         selfGeneral.value = {
             followNumber : userGeneralRet?.like || 0,
             starNumber : userGeneralRet?.star || 0
         };
-        console.log(typeof spaceGeneral.starNumber)
     })
 
     const commentModelHandle = () =>
     {
         commentModelShow.value = true;
+        // (document.querySelector(".commentAreaRef") as HTMLInputElement)?.select();
     }
 
     const publishSpaceComment = async () =>

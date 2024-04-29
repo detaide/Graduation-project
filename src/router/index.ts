@@ -30,9 +30,9 @@ const routes : RouteRecordRaw[] = [
     {
         path : "/user/:userId",
         name : "user",
-        meta : {
-            requiresAuth : true,
-        },
+        // meta : {
+        //     requiresAuth : true,
+        // },
         component : () => import("@/views/user/index.vue"),
         redirect : {name : "userSpace"},
         children: [

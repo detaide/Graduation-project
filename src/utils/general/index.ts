@@ -27,7 +27,7 @@ export function timeFormatter(timeStamp? : number, isUnix : boolean = true, form
 
 export function headImg(imageName : string)
 {
-    console.log("imgURL : ", `${import.meta.env.VITE_GLOB_REMOTE_URL}/file/get_image/${imageName}`)
+    // console.log("imgURL : ", `${import.meta.env.VITE_GLOB_REMOTE_URL}/file/get_image/${imageName}`)
     return imageName ?  `${import.meta.env.VITE_GLOB_REMOTE_URL}/file/get_image/${imageName}` : defaultHeadImg;
 }
 
