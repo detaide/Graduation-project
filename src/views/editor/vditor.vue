@@ -1,7 +1,7 @@
 <template>
     <div class="w-full h-full flex justify-center">
 
-        <div id="vditor"></div>
+        <div id="vditor" ref="vditorRef"></div>
     </div>
 </template>
 <script setup lang='ts'>
@@ -9,13 +9,16 @@
     import "vditor/dist/index.css";
     import {ref, onMounted, defineExpose} from "vue";
     import { uploadImg } from "@/api/file";
+import { NumbersFilled } from "@vicons/material";
     // const VDITOR_CDN = import.meta.env.VITE_VDITOR_CDN;
 
     const vditor  = ref<Vditor>();
+    const vditorRef = ref<HTMLDivElement>();
+    const cacheId = "Vditor_Cache_01"
 
     onMounted(async () =>
     {
-        vditor.value = new Vditor("vditor", {
+        vditor.value = await new Vditor(vditorRef?.value!, {
             height : "70vh",
             width : "90vw",
             mode : "sv",
@@ -56,10 +59,15 @@
                 
             },
             image : {
-                isPreview : true,
-            },
+                isPreview : true, 
+            }, 
             cdn: "/cdn", 
+            cache : {
+                id : cacheId,
+            }
         });
+
+        
 
     })
 

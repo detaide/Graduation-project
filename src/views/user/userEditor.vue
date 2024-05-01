@@ -4,14 +4,14 @@
             <div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 gap-x-16 gap-y-8 lg:grid-cols-5">
                 <div class="lg:col-span-1 lg:py-12">
-                <p class="max-w-xl text-lg">
-                    请告诉我你的信息
-                </p>
+                <!-- <p class="max-w-xl text-lg">
+                    请告诉我你的信息，介绍自己吧
+                </p> -->
         
                 <div class="mt-8">
-                    <a href="#" class="text-2xl font-bold text-pink-600"> 0151 475 4450 </a>
+                    <a href="#" class="text-2xl font-bold text-pink-600"> 请告诉我你的信息，介绍自己吧 </a>
         
-                    <address class="mt-2 not-italic">282 Kevin Brook, Imogeneborough, CA 58517</address>
+                    <address class="mt-2 not-italic">Please tell me your information and introduce yourself</address>
                 </div>
                 </div>
         
@@ -147,7 +147,7 @@
                         </div>
 
                         <div class="mt-6 flex items-center justify-end gap-x-6">
-                            <button type="button" class="text-sm font-semibold leading-6 text-gray-900">取消</button>
+                            <!-- <button type="button" class="text-sm font-semibold leading-6 text-gray-900">取消</button> -->
                             <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">保存</button>
                         </div>
                     </form>

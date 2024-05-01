@@ -149,6 +149,29 @@ export async function deleteChannelCommentAPI(channelCommentId : number) {
     })
 }
 
+export async function bringChannelMessageAPI()
+{
+
+    const userInfo = useUserInfoStore();
+    if(!userInfo || !userInfo.id)
+    {
+        return [];
+    }
+
+    return get({
+        url : "/channel/channel_message?user_id=" + userInfo.id
+    })
+
+}
+
+export async function ChannelMessageCheckAPI(channelItemId : number)
+{
+    const userInfo = useUserInfoStore();
+    return get({
+        url : "/channel/channel_message_check?channel_id=" + channelItemId + '&user_id=' + userInfo.id 
+    })
+}
+
 export interface ChannelInfo
 {
     name : string,

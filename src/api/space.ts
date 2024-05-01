@@ -159,6 +159,30 @@ export async function addSpaceScanNumberAPI(spaceId : number)
     })
 }
 
+export async function bringSpaceMessageAPI()
+{
+
+    const userInfo = useUserInfoStore();
+    if(!userInfo || !userInfo.id)
+    {
+        return [];
+    }
+
+    return get({
+        url : "/space/space_message?user_id=" + userInfo.id
+    })
+
+}
+
+export async function SpaceMessageCheckAPI(spaceId : number)
+{
+    const userInfo = useUserInfoStore();
+    return get({
+        url : "/space/space_message_check?space_id=" + spaceId + '&user_id=' + userInfo.id 
+    })
+}
+
+
 export interface SpaceInfo
 {
     title : string,

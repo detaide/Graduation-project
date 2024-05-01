@@ -37,7 +37,6 @@ import { eventBus } from "@/utils/eventBus";
 
     eventBus.on("deleteSpace", (spaceId) =>
     {
-        console.log(spaceId);
         allSpace.value = allSpace.value.reduce((arr, item) =>
         {
             if(item.id != spaceId)
@@ -54,16 +53,16 @@ import { eventBus } from "@/utils/eventBus";
         spaceInfo.forEach((item) => {
             let info = item.info;
             let matchInfo = info.match(regex) || [];
-            
+            let headImg : any[] = [];
             if(matchInfo && matchInfo.length > 0)
             {
-                let headImg = matchInfo[0]?.match(singleRegex);
-                newList.push({
+                headImg = matchInfo[0]?.match(singleRegex) || [];
+            }
+            newList.push({
                     ...item,
                     headImage : headImg![1],
                     outerInfo : info.replace(regex, ""),
                 })
-            }
         })
 
         return newList;

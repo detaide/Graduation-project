@@ -65,7 +65,7 @@ export const useUserInfoStore = defineStore("userInfo-store", {
         async isLoginAndOpenModal()
         {
             let loginStatus = await this.checkCookie();
-            window.message.error("请先登录");
+            // window.message.error("请先登录");
             !loginStatus && general.openLoginModel();
             return !!loginStatus;
         },
@@ -134,11 +134,23 @@ export const useUserInfoStore = defineStore("userInfo-store", {
         async checkCookie()
         {
             const cookie = getCookie();
+            let cookieStatus = false;
             if(!cookie || !this.id!)
                 return false;
             
-            let cookieStatus = await checkCookieStatusAPI(this.id!);
-            
+            try{
+                cookieStatus = await checkCookieStatusAPI(this.id!) as unknown as boolean;
+            }catch(err)
+            {
+                console.log(err);
+                this.logout();
+            }
+            console.log(cookieStatus)
+            if(!cookieStatus)
+            {
+                this.logout();
+            }
+
             return cookieStatus;
 
 

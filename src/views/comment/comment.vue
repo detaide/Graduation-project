@@ -55,7 +55,6 @@
 
     eventBus.on("deleteSpace", (spaceId) =>
     {
-        console.log(spaceId);
         allSpace.value = allSpace.value.reduce((arr, item) =>
         {
             if(item.id != spaceId)
@@ -92,10 +91,7 @@
         // console.log("allspacesss : ", allSpace.value)
 
         const spaceTypeList = await getSpaceType() as unknown as {[key : string] : string};
-        // navList.value.push({
-        //     key : 'new',
-        //     value : '最新动态'
-        // })
+
         for(let key in spaceTypeList)
         {
             navList.value.push({

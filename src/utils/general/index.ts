@@ -1,6 +1,8 @@
 export * from "./loginModel";
 import { useUserInfoStore } from '@/store/modules/userInfo';
 import { TUIKitLogin } from "@/TUIKit";
+import { SpaceInfo } from "@/typings";
+import naive from "naive-ui/es/preset";
 
 const defaultHeadImg = "https://oss.ptu.edu.cn/fileApi/my-bucket/12fcf65315994eaabc2b1d683a06ead3.png";
 export function timeFormatter(timeStamp? : number, isUnix : boolean = true, format : string = "yyyy-MM-dd HH:mm:ss")
@@ -38,3 +40,16 @@ export async function init()
     await cookieStatus && TUIKitLogin(userInfoStore.id!.toString());
 }
 
+export function spaceInfoTakeFirstImg(spaceInfo  : string)
+{
+    const singleRegex = /!\[alt text\]\((http:\/\/[^)]+)\)/;
+
+        let matchInfo = spaceInfo.match(singleRegex) || [];
+        
+        if(matchInfo && matchInfo.length > 0)
+        {
+            let headImg = matchInfo[0]?.match(singleRegex) || [];
+            return headImg[1] || '';
+        }
+
+}

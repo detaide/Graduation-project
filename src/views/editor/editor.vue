@@ -38,11 +38,11 @@
     }
 
     const vditor = ref<vditorRef>({});
+
     const {message} = createDiscreteApi(["message"]);
     const title = ref("Hello");
     const spaceType = ref();
     const userInfoStore = useUserInfoStore();
-
     // const getVditorValue = computed(() =>
     // {
     //     return vditor.value.getVditorValue!();
@@ -61,7 +61,6 @@
                 value : key
             })
         }
-        console.log(categoryOptions.value)
     })
 
     const VerifyPublish = () =>

@@ -15,8 +15,9 @@
             <Search @search="seachHandle"/>
             <div class="relative">
                 <n-avatar round :src="avatar" @click="loginHandle" v-show="loginStatus"/>
-                <div class="absolute -left-8 top-12 w-24 h-24 bg-white border border-gray-400 p-1 rounded-lg" v-show="avatarToolShow">
+                <div class="absolute -left-8 top-12 w-24 h-32 bg-white border border-gray-400 p-1 rounded-lg" v-show="avatarToolShow">
                     <div class="w-full py-2 hover:bg-gray-200 rounded-md text-center" @click="jump2Home">我的主页</div>
+                    <div class="w-full py-2 hover:bg-gray-200 rounded-md text-center" @click="jump2Message">我的消息</div>
                     <div class="w-full py-2 hover:bg-gray-200 rounded-md text-center" @click="logout">退出登录</div>
                 </div>
             </div>
@@ -71,6 +72,7 @@
         "commentInfo" : "channel",
         "user" : "selfHome",
         "home" : "Home",
+        "userMessage" : "selfHome"
 
     }
 
@@ -149,6 +151,12 @@
         router.push("/search/" + keywords);
     }
 
+    const jump2Message = () =>
+    {
+        router.push('/userMessage' );
+        // console.log(userInfoStore.id);
+    }
+
 </script>
     
 <style lang="less" scoped>
@@ -174,6 +182,6 @@
         background-size: cover;
         background-repeat: no-repeat;
         width: 160px;
-        height: 100px;
+        height: 80px;
     }
 </style>

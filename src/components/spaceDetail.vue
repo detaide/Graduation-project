@@ -42,11 +42,12 @@
     import { onMounted, ref } from "vue";
     import SpaceInfo from "./spaceInfo.vue";
     import { useRouter, useRoute } from "vue-router";
-    import { bringSpaceDetailAPI, addSpaceScanNumberAPI } from "@/api/space";
+    import { bringSpaceDetailAPI, addSpaceScanNumberAPI, SpaceMessageCheckAPI } from "@/api/space";
     import { SpaceDetail } from "@/typings";
     import {SpaceInfo as SpaceInfoType} from "@/typings";
     import { eventBus } from "@/utils/eventBus";
     import {NCarousel, NCarouselItem} from "naive-ui"
+    import {useUserInfoStore} from "@/store/modules/userInfo";
 
     const maskInner = ref(null);
     const defaultHeadImg = "https://oss.ptu.edu.cn/fileApi/my-bucket/12fcf65315994eaabc2b1d683a06ead3.png";
@@ -54,6 +55,7 @@
     const route = useRoute();
     const headImg = ref<Array<string>>([defaultHeadImg]);
     const spaceInfo = ref<Partial<SpaceInfoType>>({})
+    const userInfoStore = useUserInfoStore();
 
     const deleteSpaceHandle = (spaceId? : number) =>
     {
@@ -71,7 +73,7 @@
 
     onMounted(async () =>
     {
-        console.log( route.params.spaceId);
+        // console.log( route.params.spaceId);
         let spaceDetailRet = await bringSpaceDetailAPI<SpaceDetail>(+(route.params.spaceId as string));
         let spaceDetailArticle = spaceDetailRet.article;
         await addSpaceScanNumberAPI(+(route.params.spaceId as string));
@@ -92,6 +94,15 @@
 
         // headImg.value = (urlMatch || [])[1] || defaultHeadImg;
         spaceInfo.value = spaceDetailArticle;
+        // console.log("spaceInfo", spaceInfo.value, userInfoStore.id);
+        if(userInfoStore.id && (spaceInfo.value?.userId == userInfoStore.id))
+        {
+            await SpaceMessageCheckAPI(+(route.params.spaceId as string) as number);
+            console.log("check")
+        }
+        // 
+
+
     })
 
 </script>

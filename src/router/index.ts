@@ -64,8 +64,21 @@ const routes : RouteRecordRaw[] = [
                         component : () => import("@/components/spaceDetail.vue")
                     }
                 ]
-            }
+            },
             
+            
+        ]
+    },
+    {
+        path : "/userMessage",
+        name : "userMessage",
+        component : () => import("@/views/user/userMessage.vue"),
+        children : [
+            {
+                path : ":spaceId",
+                name : "userMessageSpace",
+                component : () => import("@/components/spaceDetail.vue")
+            }
         ]
     },
     {

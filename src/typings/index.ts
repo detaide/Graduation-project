@@ -120,6 +120,31 @@ export interface ChannelCommentData
     subCommentItemData? : Array<ChannelCommentSubItem>
 }
 
+export interface MessageType
+{
+    ownerId : number,
+    commentUserId : number,
+    publishTime : number,
+    nickname : string,
+    avatarURL : string,
+    read : number,
+    comment : string
+}
+
+export interface SpaceMessageType extends MessageType
+{
+    title : string,
+    info : string,
+    spaceId : number,
+}
+
+export interface ChannelMessageType extends MessageType
+{
+    title : string,
+    channelItemId : number,
+
+}
+
 
 
 /**

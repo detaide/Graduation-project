@@ -37,7 +37,7 @@
     import { NInput } from 'naive-ui';
     import CommentBox from './commentBox.vue';
 import { onMounted, ref } from 'vue';
-import { bringChannelItemDetailAPI, createChannelCommentAPI, deleteChannelItemAPI } from '@/api/channel';
+import { bringChannelItemDetailAPI, createChannelCommentAPI, deleteChannelItemAPI, ChannelMessageCheckAPI } from '@/api/channel';
 import { useRoute, useRouter } from 'vue-router';
 import * as general from "@/utils/general";
 import { ChannelCommentData, ChannelCommentSubItem } from '@/typings';
@@ -72,7 +72,12 @@ import { useUserInfoStore } from '@/store/modules/userInfo';
         ret.isMainComment = true;
         channelCommentData.value = ret;
         isSelf.value = userInfoStore.id == ret.ownerId;
-        console.log(isSelf, userInfoStore.id, ret.ownerId)
+        // console.log(isSelf, userInfoStore.id, ret.ownerId)
+        console.log("ret", ret)
+        if(ret?.ownerId == userInfoStore?.id)
+        {
+            await ChannelMessageCheckAPI(ret.id);
+        }
     })
 
     const commentReply = async () =>
