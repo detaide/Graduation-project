@@ -1,5 +1,28 @@
 <template >
     <div class="px-4 py-4">
+
+        <div class="flex flex-row items-center gap-2 text-base font-bold pb-4">
+            <div class="rounded-full w-4 h-4 bg-green-400"></div>
+            <div>我的频道</div>
+        </div>
+
+        <div v-show="!love" class="w-full flex justify-center border rounded-lg">
+            <div class="py-4 text-gray-400 w-full text-center" v-show="!createList?.length">空空如也...</div>
+            <div class="flex w-full flex-col gap-y-2" v-show="createList?.length">
+                <div v-for="(item, index) in createList" :key="index" class="flex justify-start p-2 boredr border-gray-400 gap-x-2 cursor-pointer" @click="jump2channel(item.name)">
+                    <img class="w-16 h-16 border bg-gray-400 rounded-lg" :src="general.headImg(item.imgURL)"/>
+                    <div class="pt-1">
+                        <!-- {{ item }} -->
+                        <div class="text-base">{{ item.name }}</div>
+                        <div class="text-xs text-gray-400">
+                            {{ textOverflow(item.memo) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="gap-line" v-show="love"></div>
         <div class="flex flex-row items-center gap-2 text-base font-bold pb-4">
             <div class="rounded-full w-4 h-4 bg-green-400"></div>
             <div>我的关注</div>
@@ -15,17 +38,17 @@
                     <div class="pt-1">
                         <div class="text-base">{{ item.name }}</div>
                         <div class="text-xs text-gray-400">
-                            {{ item.memo }}
+                            {{ textOverflow(item.memo) }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="gap-line" v-show="love"></div>
+        
     </div>
 </template>
 <script setup lang="ts">
-    import { bringChannelFollowAPI } from '@/api/channel';
+    import { bringChannelFollowAPI, bringChannelCreateAPI } from '@/api/channel';
     import { onMounted, ref } from 'vue';
     import * as general from "@/utils/general";
     import { useRouter } from 'vue-router';
@@ -33,17 +56,26 @@
     const love = false;
     const followList = ref<Array<any>>([]);
     const router = useRouter()
+    const createList = ref<Array<any>>();
 
     onMounted(async () =>
     {
         followList.value  =  await bringChannelFollowAPI() as unknown as Array<any>;
-        console.log(followList.value)
+        createList.value = await bringChannelCreateAPI() as unknown as Array<any>;
+        console.log(createList.value)
     })
 
     const jump2channel = (channelName : string) =>{
         router.push({
             path : "/channelPage/" + channelName
         })
+    }
+
+    const textOverflow = (text  :string) =>
+    {
+        if(!text)   return "";
+        let length = 10;
+        return text.length > length ? text.slice(0, length) + '...' : text;
     }
 
 </script>

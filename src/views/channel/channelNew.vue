@@ -98,7 +98,8 @@ import { PhotoIcon, UserCircleIcon } from '@heroicons/vue/24/solid';
     {
       channelInfo.value.type = parseInt(channelInfo.value.type as string);
       console.log(channelInfo.value)
-      return await createChannelAPI(channelInfo.value);
+      await createChannelAPI(channelInfo.value);
+      window.message.success("创建频道成功");
     }
 
     onMounted(async () =>

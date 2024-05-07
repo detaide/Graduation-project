@@ -24,7 +24,7 @@
     </div>
 </template>
 <script setup lang='ts'>
-    import { computed, onMounted, ref } from "vue";
+    import { computed, onMounted, ref, watch } from "vue";
     import Vditor from "./vditor.vue";
     import { getSpaceType, publishSpaceAPI } from "@/api/space";
     import { openLoginModel } from "@/utils/general/loginModel";
@@ -35,6 +35,7 @@
     interface vditorRef{
         getVditorValue? : () => any,
         md2html? : (md : string) => any,
+        templateActive? : () => any
     }
 
     const vditor = ref<vditorRef>({});
@@ -49,6 +50,19 @@
     // })
 
     const categoryOptions = ref<Array<any>>([]);
+
+    watch(spaceType, () =>
+    {
+        if(spaceType.value == 108)
+        {
+            templateGenerate()
+        }
+    })
+
+    const templateGenerate = () =>
+    {
+        vditor.value.templateActive!();
+    }
 
     onMounted(async () =>
     {

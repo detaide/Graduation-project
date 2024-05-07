@@ -36,11 +36,14 @@
     import { Icon } from "@vicons/utils";
     import { MaleSharp, FemaleSharp, ChatboxEllipsesSharp, Location } from "@vicons/ionicons5";
     import { SchoolLocation } from "@/typings";
-import { router } from "@/router";
+    import {useUserInfoStore} from "@/store/modules/userInfo";
+    import { router } from "@/router";
 
     const props = defineProps<{
         userInfo : Array<Partial<UserMessage>>
     }>();
+
+    const userInfoStore = useUserInfoStore();
 
     onMounted(() =>
     {
@@ -56,7 +59,8 @@ import { router } from "@/router";
 
     const jump2UserHome = (id : number) =>
     {
-        id && router.push({path : "/user/" + id})
+        // id && router.push({path : "/user/" + id})
+        userInfoStore.jump2UserHome(id);
     }
 </script>
 

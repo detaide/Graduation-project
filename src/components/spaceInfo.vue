@@ -20,6 +20,7 @@
             <div v-show="self" v-permission="deleteSpace" class="text-white font-bold w-20 h-10 text-center flex items-center justify-center bg-red-500 rounded-full cursor-pointer transform active:scale-95 duration-100">
                 删除             
             </div>
+            <div v-show="(!props.spaceInfo.cerType) && (props.spaceInfo.type == 108)" class="absolute top-16 bg-yellow-200 w-full px-4 py-1 left-0 text-xs">该用户尚未被认证，请注意甄别</div>
         </div>
 
         <div class="pt-20 h-6/7 scroll-hide overflow-auto pl-4">

@@ -183,5 +183,6 @@
         background-repeat: no-repeat;
         width: 160px;
         height: 80px;
+        margin-top: -20px;
     }
 </style>

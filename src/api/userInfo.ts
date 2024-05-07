@@ -115,3 +115,29 @@ export async function getFollowedUserAPI(userId : number) {
         url : "/user/followed_user?user_id=" + userId
     });
 }
+
+export async function checkPwdRightAPI(password : string)
+{
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+    return await post({
+        url : "/user/check_password_right?" + userQuery,
+        data : {
+            password
+        }
+    })
+}
+
+export async function changeUserPwdAPI(password : string, oldPassword : string)
+{
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+
+    return await post({
+        url : "/user/change_user_pwd?" + userQuery,
+        data : {
+            old_password : oldPassword,
+            new_password : password
+        }
+    })
+}

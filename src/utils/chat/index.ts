@@ -93,7 +93,8 @@ export async function syncUserInfo(userInfo : Partial<UserMessage>)
         allowType : TUIChatEngine.TYPES.ALLOW_TYPE_ALLOW_ANY
     };
 
-    (import.meta.env.VITE_SERVICE_STATUS === 'false') && (syncObj.avatar = userInfo.avatarURL)
+    (import.meta.env.VITE_SERVICE_STATUS === 'true') && (syncObj.avatar = userInfo.avatarURL)
+    console.log(syncObj)
     let {data} = await chat.updateMyProfile(syncObj)
     if(data)    return true;
     return false;

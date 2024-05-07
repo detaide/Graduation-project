@@ -5,7 +5,7 @@
             <div v-show="props.type === 'follower'">关注</div>
         </div>
         <div class="flex flex-wrap gap-x-10 gap-y-2" v-show="userList?.length">
-            <div v-for="(item, index) in userList" :key="index" class="flex flex-row gap-x-4 w-2/5 cursor-pointer bg-flow-box" @click="jump2UserHome(item.userId!)">
+            <div v-for="(item, index) in userList" :key="index" class="flex flex-row gap-x-4 w-2/5 cursor-pointer bg-flow-box mb-4" @click="jump2UserHome(item.userId!)">
                 <img :src="general.headImg(item.avatarURL!)" alt="" class="w-20 h-20 rounded-lg"/>
                 <div class="flex flex-row justify-between w-full">
                     <div class="w-3/5">

@@ -15,6 +15,7 @@ import { NumbersFilled } from "@vicons/material";
     const vditor  = ref<Vditor>();
     const vditorRef = ref<HTMLDivElement>();
     const cacheId = "Vditor_Cache_01"
+    const  templateValue = `商品名称：\n商品类型：\n成色：\n价格：\n联系方式：\n校区：\n描述：\n`
 
     onMounted(async () =>
     {
@@ -87,9 +88,23 @@ import { NumbersFilled } from "@vicons/material";
         return await Vditor.md2html(text, {cdn : "/cdn", mode : "light"});
     }
 
+    const templateActive = () =>
+    {
+        if(vditor.value?.getValue())
+        {
+            window.confirm("当前输入框已有内容，是否使用模板覆盖？")
+            {
+                vditor.value?.setValue(templateValue);
+            }
+        }
+
+        
+    }
+
     defineExpose({
         getVditorValue,
-        md2html
+        md2html,
+        templateActive
     })
 
 </script>

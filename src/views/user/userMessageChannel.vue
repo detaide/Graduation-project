@@ -36,7 +36,7 @@
     const textOverflow = (text  :string) =>
     {
         if(!text)   return "";
-        let length = 120;
+        let length = 20;
         return text.length > length ? text.slice(0, length) + '...' : text;
     }
 

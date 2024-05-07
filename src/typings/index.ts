@@ -20,7 +20,10 @@ export interface UserMessage
     avatarURL : string,
     id : number,
     userId : number,
-    avatar? : string
+    avatar? : string,
+    academy?  :string,
+    studentId? : string,
+    cerType? : boolean          // 认证状态
 }
 
 export interface SpaceInfo
@@ -39,7 +42,8 @@ export interface SpaceInfo
     avatarURL : string,
     spaceComment : number,
     spaceStar : number,
-    spaceLike : number
+    spaceLike : number,
+    cerType? : number
 }
 
 export interface SpaceDetail
@@ -173,6 +177,47 @@ export class SchoolLocation {
         for(let key in this.schoolLocation)
         {
             if(this.schoolLocation[key] === location)
+            {
+                return key;
+            }
+        }
+        return "";
+    }
+}
+
+export class AcademyMap{
+    static academyLocation : {[key : string] : string} = {
+        601 : "文化与传播学院",
+        602 : "外国语学院",
+        603 : "数学与金融学院",
+        604 : "环境与生化学院",
+        605: "机电与信息工程学院",
+        606 : "土木工程学院",
+        607 : "工艺美术学院",
+        608 : "音乐学院",
+        609 : "体育学院",
+        610 : "护理学院",
+        611 : "药学与产业学院",
+        612 : "管理学院",
+        613 : "商学院",
+        614 : "基础教育学院",
+        615 : "基础医学院",
+        616 : "马克思主义学院",
+        617 : "继续教育学院",
+        618 : "新工科产业学院"
+    }
+
+    static getAcademyLocation(location : string) : string
+    {
+        // console.log(location, this.academyLocation[location])
+        return this.academyLocation[location] || '未知';
+    }
+
+    static getAcademyLocationKey(location : string) : string
+    {
+        for(let key in this.academyLocation)
+        {
+            if(this.academyLocation[key] === location)
             {
                 return key;
             }

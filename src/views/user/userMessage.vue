@@ -1,7 +1,7 @@
 <template>
     <div class="flex w-4/5 flex-col justify-between border-e rounded-lg m-auto">
         
-        <div class="px-4 py-2 flex flex-row bg-white mt-4">
+        <div class="px-4 py-2 flex flex-row bg-white mt-4 rounded-lg">
             
             <ul class="mt-6 space-y-1 w-1/5">
                 <div class="w-full font-bold px-4 py-2 text-lg">消息列表</div>

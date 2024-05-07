@@ -8,11 +8,11 @@
             </div>
             <!-- channel-hot-box -->
             <div class="pt-4 flex overflow-x-hidden gap-x-16 gap-y-4 flex-wrap">
-                <div class="flex flex-row gap-2 cursor-pointer" 
+                <div class="flex flex-row gap-2 cursor-pointer max-w-120" 
                     v-for="(item, index) in hotData" :key="index"
                     @click="jump2ChannelPage(item?.name!)"
                 >
-                    <img class="w-20 h-20 bg-gray-400 rounded-lg active:scale-95 transform" :src="general.headImg(item.imgURL)" />
+                    <img class="w-20 h-20 bg-gray-400 rounded-lg active:scale-95 transform" :src="general.headImg(item?.imgURL || '')" />
                     <div class="flex flex-col gap-y-1">
                         <div>{{ item?.name }}</div>
                         <div class="flex gap-1 items-center text-gray-400">
@@ -20,14 +20,14 @@
                             <Icon :size="16">
                                 <People/>
                             </Icon>
-                            <div class="text-gray-400 text-xs">{{ value2Thousand(item?.follow) || 0 }}</div>
+                            <div class="text-gray-400 text-xs">{{ value2Thousand(item?.follow || 0)  }}</div>
                         </div>
                         <div class="flex gap-1 items-center text-gray-400">
                             <!-- <div class="w-4 h-4 bg-gray-400"></div> -->
                             <Icon :size="16">
                                 <ChatboxEllipses/>
                             </Icon>
-                            <div class="text-gray-400 text-xs">{{ value2Thousand(item?.itemNumber) || 0 }}</div>
+                            <div class="text-gray-400 text-xs">{{ value2Thousand(item?.itemNumber || 0 ) }}</div>
                         </div>
                     </div>
                 </div>
@@ -76,13 +76,13 @@ import { useRouter } from "vue-router";
     ];
 
     const showNewChannel = ref(false);
-    const hotData = ref<Partial<ChannelInfo>>({});
+    const hotData = ref<Array<Partial<ChannelInfo>>>([]);
     const router = useRouter();
 
     onMounted(async () =>
     {
         let ret = await bringChannelHotAPI();
-        hotData.value = ret as unknown as Partial<ChannelInfo>;
+        hotData.value = ret as unknown as Array<Partial<ChannelInfo>>;
         console.log(hotData.value)
     })
 
@@ -116,5 +116,9 @@ import { useRouter } from "vue-router";
 
 </script>
 <style lang="less" scoped>
-    
+    .max-w-120
+    {
+        max-width: 160px;
+        min-width: 160px;
+    }
 </style>

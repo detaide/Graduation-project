@@ -30,6 +30,20 @@ export async function bringChannelFollowAPI() {
     });
 }
 
+export async function bringChannelCreateAPI()
+{
+    const userInfo = useUserInfoStore();
+    let userQuery = await userInfo.userQuery();
+
+    if(!userQuery)
+    {
+        return [];
+    }
+    return await get({
+        url : "/channel/channel_create_by_user_id?" + userQuery
+    });
+}
+
 export async function bringChannelDetailByNameAPI(channelName: string) {
     const userInfo = useUserInfoStore();
     let userQuery = await userInfo.userQuery();

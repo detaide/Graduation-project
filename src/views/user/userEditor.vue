@@ -22,7 +22,10 @@
                             <h2 class="text-base font-semibold leading-7 text-gray-900">Infomation</h2>
                             <p class="mt-1 text-sm leading-6 text-gray-600">请在此编辑您的个人信息</p>
 
+                            <div class="mt-4">认证状态 : {{ userMessage.cerType ? "已认证" : "未认证" }}</div>
+
                             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                                
                                 <div class="sm:col-span-4">
                                 <label for="username" class="block text-sm font-medium leading-6 text-gray-900">用户名</label>
                                 <div class="mt-2">
@@ -99,6 +102,13 @@
                                     </div>
                                 </div>
 
+                                <div class="sm:col-span-4">
+                                    <label for="email" class="block text-sm font-medium leading-6 text-gray-900">学号</label>
+                                    <div class="mt-2">
+                                        <input id="studentId" name="studentId" type="studentId" autocomplete="studentId" v-model="userMessage.studentId" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                    </div>
+                                </div>
+
                                 <div class="sm:col-span-3">
                                     <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">性别</label>
                                     <div class="mt-2">
@@ -125,6 +135,15 @@
                                         <option value="old">学园校区</option>
                                         <option value="old-north">北区</option> -->
                                         <option v-for="(item, index) in Object.keys(SchoolLocation.schoolLocation)" :key="index" :value="item">{{ SchoolLocation.getSchoolLocation(item) }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-3">
+                                    <label for="school" class="block text-sm font-medium leading-6 text-gray-900">学院</label>
+                                    <div class="mt-2">
+                                        <select id="academy" name="academy" autocomplete="school-name" v-model="userMessage.academy" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                        <option v-for="(item, index) in Object.keys(AcademyMap.academyLocation)" :key="index" :value="item">{{ AcademyMap.getAcademyLocation(item) }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -164,7 +183,8 @@ import { UserMessage } from '@/typings';
 import { NDatePicker, useMessage } from 'naive-ui';
     import { onMounted, reactive, ref } from 'vue';
     import * as chatManager from "@/utils/chat";
-    import {SchoolLocation} from "@/typings";
+    import {SchoolLocation, AcademyMap} from "@/typings";
+
 
     const formRef = ref<HTMLFormElement>();
     const fileInputRef = ref<HTMLInputElement>();
@@ -186,7 +206,9 @@ import { NDatePicker, useMessage } from 'naive-ui';
         school : '',
         avatarURL : '',
         birthday : new Date().getTime(),
-
+        academy : '',
+        studentId : '',
+        cerType : false
     });
 
     onMounted(() =>

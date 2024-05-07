@@ -1,5 +1,5 @@
 <template >
-    <div class="w-1/2  my-auto mx-auto ">
+    <div class="w-3/4  my-auto mx-auto ">
         <div class="mt-4 bg-white px-4 py-4">
             <div class="flex flex-row gap-4 items-center">
                 <img class="w-24 h-24 bg-gray-400 rounded-lg cursor-pointer" :src="general.headImg(channelCommentData?.channelImg!)" @click="jumpToChannelDetail(channelCommentData?.name!)"/>
